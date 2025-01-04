@@ -60,4 +60,7 @@ export class LoginComponent {
   onLogin(){
 
   }
+  toggleMode(){
+    
+  }
 }

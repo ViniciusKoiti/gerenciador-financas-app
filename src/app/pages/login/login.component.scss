@@ -19,15 +19,12 @@ body{
   padding: 1em;
   width: 50%;
   display: flex;
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
   padding-bottom: 0;
-  justify-content: space-between;
 }
 
-.card-conteiner{
-  padding: 1em;
-
-}
 
 
   .tab-content {
