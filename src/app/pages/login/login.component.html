@@ -1,0 +1,96 @@
+<div class="container">
+    <mat-card class="form-container d-flex-align-justify-center">
+      <mat-card-content>
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" animationDuration="500ms">
+          
+          <mat-tab label="Login">
+            <div class="tab-content">
+              <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Email</mat-label>
+                  <input matInput type="email" formControlName="email" placeholder="Digite seu email">
+                  <mat-icon matSuffix>email</mat-icon>
+                  <mat-error *ngIf="loginForm.get('email')?.errors?.['required']">
+                    Email é obrigatório
+                  </mat-error>
+                  <mat-error *ngIf="loginForm.get('email')?.errors?.['email']">
+                    Email inválido
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Senha</mat-label>
+                  <input matInput [type]="hideLoginPassword ? 'password' : 'text'" 
+                         formControlName="password" placeholder="Digite sua senha">
+                  <mat-icon matSuffix (click)="hideLoginPassword = !hideLoginPassword">
+                    {{hideLoginPassword ? 'visibility_off' : 'visibility'}}
+                  </mat-icon>
+                  <mat-error *ngIf="loginForm.get('password')?.errors?.['required']">
+                    Senha é obrigatória
+                  </mat-error>
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" 
+                        class="full-width submit-button" 
+                        type="submit" 
+                        [disabled]="loginForm.invalid">
+                  Entrar
+                </button>
+              </form>
+            </div>
+          </mat-tab>
+
+          <!-- Tab Cadastro -->
+          <mat-tab label="Cadastro">
+            <div class="tab-content">
+              <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Nome</mat-label>
+                  <input matInput formControlName="name" placeholder="Digite seu nome">
+                  <mat-icon matSuffix>person</mat-icon>
+                  <mat-error *ngIf="signupForm.get('name')?.errors?.['required']">
+                    Nome é obrigatório
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Email</mat-label>
+                  <input matInput type="email" formControlName="email" placeholder="Digite seu email">
+                  <mat-icon matSuffix>email</mat-icon>
+                  <mat-error *ngIf="signupForm.get('email')?.errors?.['required']">
+                    Email é obrigatório
+                  </mat-error>
+                  <mat-error *ngIf="signupForm.get('email')?.errors?.['email']">
+                    Email inválido
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Senha</mat-label>
+                  <input matInput [type]="hideSignupPassword ? 'password' : 'text'"
+                         formControlName="password" placeholder="Digite sua senha">
+                  <mat-icon matSuffix (click)="hideSignupPassword = !hideSignupPassword">
+                    {{hideSignupPassword ? 'visibility_off' : 'visibility'}}
+                  </mat-icon>
+                  <mat-error *ngIf="signupForm.get('password')?.errors?.['required']">
+                    Senha é obrigatória
+                  </mat-error>
+                  <mat-error *ngIf="signupForm.get('password')?.errors?.['minlength']">
+                    Senha deve ter no mínimo 6 caracteres
+                  </mat-error>
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" 
+                        class="full-width submit-button" 
+                        type="submit" 
+                        [disabled]="signupForm.invalid">
+                  Cadastrar
+                </button>
+              </form>
+            </div>
+          </mat-tab>
+          
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+  </div>

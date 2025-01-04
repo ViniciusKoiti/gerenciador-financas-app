@@ -1,0 +1,47 @@
+body{
+    height: 0;
+}
+
+
+
+
+
+  .tab-content {
+    padding: 20px 0;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .submit-button {
+    margin-top: 20px;
+    padding: 8px;
+  }
+
+  mat-form-field {
+    margin-bottom: 16px;
+  }
+
+  mat-icon {
+    cursor: pointer;
+  }
+
+.form-container{
+    width: 75vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+	border-radius: 10px;
+  	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
+			0 10px 10px rgba(0,0,0,0.22);
+	position: relative;
+	overflow: hidden;
+	max-width: 100%;
+	min-height: 480px;
+}
+
+.container {
+    height: 100vh;
+}
