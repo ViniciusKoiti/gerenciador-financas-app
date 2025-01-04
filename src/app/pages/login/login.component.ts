@@ -26,6 +26,7 @@ import { CommonModule } from '@angular/common';
 export class LoginComponent {
   loginForm: FormGroup;
   signupForm: FormGroup;
+  hideLoginForm: boolean = false;
   hideLoginPassword: boolean = false;
   hideSignupPassword: boolean = false;
 

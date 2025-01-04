@@ -1,10 +1,13 @@
-<div class="container">
+<div class="container d-flex-align-justify-center">
     <mat-card class="form-container d-flex-align-justify-center">
-      <mat-card-content>
-        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" animationDuration="500ms">
-          
-          <mat-tab label="Login">
-            <div class="tab-content">
+      <div class="d-flex card-conteiner">
+            <div class="login-container">
+              <div class="signin">
+                <h1>Login</h1>
+                
+                <p>ou use sua conta</p> 
+              </div>
+
               <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Email</mat-label>
@@ -30,19 +33,35 @@
                   </mat-error>
                 </mat-form-field>
 
+                <div class="d-flex-align-justify-center">
+                  Esqueceu a senha?
+                </div>
+
                 <button mat-raised-button color="primary" 
                         class="full-width submit-button" 
                         type="submit" 
                         [disabled]="loginForm.invalid">
                   Entrar
                 </button>
+               
               </form>
             </div>
-          </mat-tab>
+            <div class="signup-container-info">
+                Olá, amigo!
 
-          <!-- Tab Cadastro -->
-          <mat-tab label="Cadastro">
-            <div class="tab-content">
+                <div>
+                  Entre com seus dados pessoais e inicie seu gerenciamento conosco
+                </div>
+
+                <button mat-raised-button color="primary" 
+                class="full-width submit-button" 
+                type="submit" 
+                [disabled]="loginForm.invalid">
+                    Registre-se
+                </button>
+
+            </div>
+              <div class="signup-container" *ngIf="hideLoginForm">
               <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Nome</mat-label>
@@ -88,9 +107,7 @@
                 </button>
               </form>
             </div>
-          </mat-tab>
           
-        </mat-tab-group>
-      </mat-card-content>
+          </div>
     </mat-card>
   </div>

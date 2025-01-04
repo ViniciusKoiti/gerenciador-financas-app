@@ -3,7 +3,31 @@ body{
 }
 
 
+.login-container{
+  width: 50%;
+}
 
+.signin{
+  padding: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.signup-container-info{
+  padding: 1em;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+  justify-content: space-between;
+}
+
+.card-conteiner{
+  padding: 1em;
+
+}
 
 
   .tab-content {
