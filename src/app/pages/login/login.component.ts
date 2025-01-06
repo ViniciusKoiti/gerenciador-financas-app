@@ -66,6 +66,7 @@ export class LoginComponent implements OnInit {
 
 
   onSignup() {
+    console.log(this.signupForm.value);
     if (!this.signupForm.valid) {
       this.signupForm.markAllAsTouched();
       return;
