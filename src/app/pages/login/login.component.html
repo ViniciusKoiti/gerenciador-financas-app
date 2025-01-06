@@ -66,12 +66,8 @@
     'minlength': 'Senha deve ter no mínimo 6 caracteres'
   }"></app-form-field>
           <div class="flex justify-center items-center w-12/12">
-            <button
-              class="w-48 border-0 h-12 text-white hover:bg-white bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-3xl shadow-md hover:shadow-xl border-0">
-              <span>
-                Cadastra-se
-              </span>
-            </button>
+            <app-custom-button text="Cadastra-se" type="submit" [isGradient]="true" [customClasses]="'w-48 border-0'"
+              (buttonClick)="onSignup()"></app-custom-button>
           </div>
         </form>
       </div>
@@ -87,13 +83,10 @@
           ? "Para se manter conectado conosco, faça login com suas informações pessoais"
           : "Entre com seus dados pessoais e inicie seu gerenciamento conosco"}}
         </p>
-        <button mat-stroked-button
-          class="w-48 h-12 border-2 text-white hover:bg-white hover:text-yellow-500 transition-colors"
-          (click)="toggleMode()">
-          <span class="text-white w-48 h-12 hover:text-yellow-500 w-12/12 h-12/12" [class.opacity-0]="isTransitioning">
-            {{!hideSignupForm ? 'Registrar-se' : 'Fazer Login'}}
-          </span>
-        </button>
+        <app-custom-button [text]="!hideSignupForm ? 'Registrar-se' : 'Fazer Login'" type="button"
+          [customClasses]="'w-48 border-0 hover:bg-white hover:text-yellow-500 transition-colors'"
+          (buttonClick)="toggleMode()">
+        </app-custom-button>
       </div>
     </div>
   </div>
