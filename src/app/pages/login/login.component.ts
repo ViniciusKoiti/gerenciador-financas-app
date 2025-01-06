@@ -27,6 +27,8 @@ export class LoginComponent {
   loginForm: FormGroup;
   signupForm: FormGroup;
   hideLoginForm: boolean = false;
+  hideSignupForm: boolean = false;
+  isTransitioning: boolean = false;
   hideLoginPassword: boolean = false;
   hideSignupPassword: boolean = false;
 
@@ -60,7 +62,16 @@ export class LoginComponent {
   onLogin(){
 
   }
-  toggleMode(){
     
+  toggleMode() {
+    this.isTransitioning = true;
+    
+    setTimeout(() => {
+      this.hideSignupForm = !this.hideSignupForm;
+      
+      setTimeout(() => {
+        this.isTransitioning = false;
+      }, 300); // Metade do tempo da transição para voltar a mostrar
+    }, 150); // Tempo para esconder antes de trocar o texto
   }
 }
