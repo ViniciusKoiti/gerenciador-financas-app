@@ -8,6 +8,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { FormFieldComponent } from '../../shared/components/form-field/form-field.component';
+import { CustomButtonComponent } from '../../shared/components/custom-buttom/custom-buttom.component';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,8 @@ import { FormFieldComponent } from '../../shared/components/form-field/form-fiel
     MatCardModule,
     MatTabsModule,
     MatButtonModule,
+    CustomButtonComponent,
+
     FormFieldComponent,
   ],
   templateUrl: './login.component.html',

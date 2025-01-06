@@ -39,9 +39,8 @@
             </a>
           </div>
 
-          <button mat-raised-button color="primary" class="w-full h-12" type="submit" [disabled]="loginForm.invalid">
-            Entrar
-          </button>
+          <app-custom-button text="Entrar" type="submit" [disabled]="loginForm.invalid" [customClasses]="'w-full'"
+            (buttonClick)="onLogin()"></app-custom-button>
         </form>
       </div>
 
@@ -61,14 +60,14 @@
     'email': 'Email inválido'
   }"></app-form-field>
 
-          <app-form-field label="Senha" type="password" [formControl]="passwordSignupControl" placeholder="Digite sua senha"
-            [errors]="{
+          <app-form-field label="Senha" type="password" [formControl]="passwordSignupControl"
+            placeholder="Digite sua senha" [errors]="{
     'required': 'Senha é obrigatória',
     'minlength': 'Senha deve ter no mínimo 6 caracteres'
   }"></app-form-field>
           <div class="flex justify-center items-center w-12/12">
             <button
-              class="w-48 border-0 h-12 border-2 text-white hover:bg-white bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 hover:text-white-100">
+              class="w-48 border-0 h-12 text-white hover:bg-white bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-3xl shadow-md hover:shadow-xl border-0">
               <span>
                 Cadastra-se
               </span>
