@@ -1,0 +1,21 @@
+<mat-form-field appearance="outline" class="w-full mb-4">
+    <mat-label>{{ label }}</mat-label>
+    <input 
+      matInput 
+      [type]="type === 'password' ? (hidePassword ? 'password' : 'text') : type"
+      [formControl]="formControl"
+      [placeholder]="placeholder"
+    >
+    <mat-icon 
+      matSuffix 
+      *ngIf="type === 'password'"
+      (click)="togglePassword()"
+      class="cursor-pointer"
+    >
+      {{hidePassword ? 'visibility_off' : 'visibility'}}
+    </mat-icon>
+    <mat-icon matSuffix *ngIf="type !== 'password'">{{ icon }}</mat-icon>
+    <mat-error *ngIf="formControl.invalid">
+      {{ getErrorMessage() }}
+    </mat-error>
+  </mat-form-field>

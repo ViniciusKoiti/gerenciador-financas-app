@@ -23,29 +23,15 @@
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-          <mat-form-field appearance="outline" class="w-full mb-4">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email" placeholder="Digite seu email">
-            <mat-icon matSuffix>email</mat-icon>
-            <mat-error *ngIf="loginForm.get('email')?.errors?.['required']">
-              Email é obrigatório
-            </mat-error>
-            <mat-error *ngIf="loginForm.get('email')?.errors?.['email']">
-              Email inválido
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="w-full mb-4">
-            <mat-label>Senha</mat-label>
-            <input matInput [type]="hideLoginPassword ? 'password' : 'text'" formControlName="password"
-              placeholder="Digite sua senha">
-            <mat-icon matSuffix (click)="hideLoginPassword = !hideLoginPassword">
-              {{hideLoginPassword ? 'visibility_off' : 'visibility'}}
-            </mat-icon>
-            <mat-error *ngIf="loginForm.get('password')?.errors?.['required']">
-              Senha é obrigatória
-            </mat-error>
-          </mat-form-field>
+          <app-form-field label="Email" type="email" [formControl]="emailControl" placeholder="Digite seu email"
+            icon="email" [errors]="{
+    'required': 'Email é obrigatório',
+    'email': 'Email inválido'
+  }"></app-form-field>
+          <app-form-field label="Senha" type="password" [formControl]="passwordControl" placeholder="Digite sua senha"
+            [errors]="{
+            'required': 'Senha é obrigatória'
+          }"></app-form-field>
 
           <div class="flex justify-center items-center p-4">
             <a class="text-primary-500 hover:underline">
@@ -60,45 +46,26 @@
       </div>
 
       <!-- Signup Form -->
-      <div class="absolute top-0 left-0 w-full h-full p-8 bg-white transition-transform duration-500 w-6/12"
+      <div class="absolute top-0 left-0 h-full p-8 bg-white transition-transform duration-500 w-6/12"
         [ngClass]="{'translate-x-0': hideSignupForm, '-translate-x-full': !hideSignupForm}">
         <h1 class="text-2xl font-bold mb-6 text-center">Cadastra-se</h1>
         <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
-          <mat-form-field appearance="outline" class="w-full mb-4">
-            <mat-label>Nome</mat-label>
-            <input matInput formControlName="name" placeholder="Digite seu nome">
-            <mat-icon matSuffix>person</mat-icon>
-            <mat-error *ngIf="signupForm.get('name')?.errors?.['required']">
-              Nome é obrigatório
-            </mat-error>
-          </mat-form-field>
+          <app-form-field label="Nome" type="text" [formControl]="nameControl" placeholder="Digite seu nome"
+            icon="person" [errors]="{
+    'required': 'Nome é obrigatório'
+  }"></app-form-field>
 
-          <mat-form-field appearance="outline" class="w-full mb-4">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email" placeholder="Digite seu email">
-            <mat-icon matSuffix>email</mat-icon>
-            <mat-error *ngIf="signupForm.get('email')?.errors?.['required']">
-              Email é obrigatório
-            </mat-error>
-            <mat-error *ngIf="signupForm.get('email')?.errors?.['email']">
-              Email inválido
-            </mat-error>
-          </mat-form-field>
+          <app-form-field label="Email" type="email" [formControl]="emailSignupControl" placeholder="Digite seu email"
+            icon="email" [errors]="{
+    'required': 'Email é obrigatório',
+    'email': 'Email inválido'
+  }"></app-form-field>
 
-          <mat-form-field appearance="outline" class="w-full mb-4">
-            <mat-label>Senha</mat-label>
-            <input matInput [type]="hideSignupPassword ? 'password' : 'text'" formControlName="password"
-              placeholder="Digite sua senha">
-            <mat-icon matSuffix (click)="hideSignupPassword = !hideSignupPassword">
-              {{hideSignupPassword ? 'visibility_off' : 'visibility'}}
-            </mat-icon>
-            <mat-error *ngIf="signupForm.get('password')?.errors?.['required']">
-              Senha é obrigatória
-            </mat-error>
-            <mat-error *ngIf="signupForm.get('password')?.errors?.['minlength']">
-              Senha deve ter no mínimo 6 caracteres
-            </mat-error>
-          </mat-form-field>
+          <app-form-field label="Senha" type="password" [formControl]="passwordSignupControl" placeholder="Digite sua senha"
+            [errors]="{
+    'required': 'Senha é obrigatória',
+    'minlength': 'Senha deve ter no mínimo 6 caracteres'
+  }"></app-form-field>
           <div class="flex justify-center items-center w-12/12">
             <button
               class="w-48 border-0 h-12 border-2 text-white hover:bg-white bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 hover:text-white-100">
@@ -124,8 +91,7 @@
         <button mat-stroked-button
           class="w-48 h-12 border-2 text-white hover:bg-white hover:text-yellow-500 transition-colors"
           (click)="toggleMode()">
-          <span class="text-white w-48 h-12 hover:text-yellow-500 w-12/12 h-12/12"
-            [class.opacity-0]="isTransitioning">
+          <span class="text-white w-48 h-12 hover:text-yellow-500 w-12/12 h-12/12" [class.opacity-0]="isTransitioning">
             {{!hideSignupForm ? 'Registrar-se' : 'Fazer Login'}}
           </span>
         </button>
