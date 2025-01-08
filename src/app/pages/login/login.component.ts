@@ -53,13 +53,13 @@ export class LoginComponent implements OnInit {
   initializeForms() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      senha: ['', [Validators.required, Validators.minLength(6)]]
     });
 
     this.signupForm = this.fb.group({
-      name: ['', [Validators.required]],
+      nome: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      senha: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
@@ -108,11 +108,10 @@ export class LoginComponent implements OnInit {
         this.isTransitioning = false;
       }, 300); // Metade do tempo da transição para voltar a mostrar
     }, 150); // Tempo 
-    // para esconder antes de trocar o texto
   }
 
   get passwordControl(): FormControl {
-    return this.loginForm.get('password') as FormControl;
+    return this.loginForm.get('senha') as FormControl;
   }
 
   get emailControl(): FormControl {
@@ -120,7 +119,7 @@ export class LoginComponent implements OnInit {
   }
 
   get nameControl(): FormControl {
-    return this.signupForm.get('name') as FormControl;
+    return this.signupForm.get('nome') as FormControl;
   }
 
   get emailSignupControl(): FormControl {
@@ -128,7 +127,7 @@ export class LoginComponent implements OnInit {
   }
 
   get passwordSignupControl(): FormControl {
-    return this.signupForm.get('password') as FormControl;
+    return this.signupForm.get('senha') as FormControl;
   }
 
   get email() {
@@ -136,6 +135,6 @@ export class LoginComponent implements OnInit {
   }
 
   get password() {
-    return this.loginForm.get('password');
+    return this.loginForm.get('senha');
   }
 }
