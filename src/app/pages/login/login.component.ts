@@ -39,6 +39,7 @@ export class LoginComponent implements OnInit {
   isTransitioning: boolean = false;
   hideLoginPassword: boolean = false;
   hideSignupPassword: boolean = false;
+  isMobile = false;
 
   constructor(
     private fb: FormBuilder,
@@ -48,6 +49,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForms();
+    window.addEventListener('resize', () => this.checkScreenSize());
   }
 
   initializeForms() {
@@ -61,6 +63,10 @@ export class LoginComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(6)]]
     });
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth < 1024;
   }
 
 
