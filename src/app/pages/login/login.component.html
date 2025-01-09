@@ -126,11 +126,13 @@
 
           <div class="flex justify-center items-center w-full">
             <app-custom-button 
+              
               text="Cadastrar-se" 
               type="submit" 
+              [disabled]="isSaving"
               [isGradient]="true" 
               [customClasses]="'w-48 border-0'"
-              (buttonClick)="onSignup()"
+             
             ></app-custom-button>
           </div>
 
@@ -160,6 +162,7 @@
           <app-custom-button 
             [text]="!hideSignupForm ? 'Registrar-se' : 'Fazer Login'" 
             type="button"
+          
             [customClasses]="'w-48 border-0 hover:bg-white hover:text-yellow-500 transition-colors'"
             (buttonClick)="toggleMode()"
           ></app-custom-button>

@@ -12,6 +12,7 @@ import { CustomButtonComponent } from '../../shared/components/custom-buttom/cus
 import { AuthService } from '../../shared/services/auth.service';
 import { ILoginRequest } from '../../requests/login.request';
 import { ISignupRequest } from '../../requests/signup.request';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -39,11 +40,14 @@ export class LoginComponent implements OnInit {
   isTransitioning: boolean = false;
   hideLoginPassword: boolean = false;
   hideSignupPassword: boolean = false;
+
+  isSaving: boolean = false;
   isMobile = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private router: Router
   ) {
   }
 
@@ -72,7 +76,7 @@ export class LoginComponent implements OnInit {
 
 
   onSignup() {
-    console.log(this.signupForm.value);
+    this.isSaving = true;
     if (!this.signupForm.valid) {
       this.signupForm.markAllAsTouched();
       return;
@@ -80,10 +84,14 @@ export class LoginComponent implements OnInit {
     const signupForm: ISignupRequest = this.signupForm.value;
     this.authService.signup(signupForm).subscribe({
       next: (response) => {
+        this.router.navigate(['/dashboard'])
         console.log('Signup successful', response);
       },
       error: (error) => {
         console.error('Request failed', error);
+      },
+      complete: () => {
+        this.isSaving = false;
       }
     })
   }
