@@ -33,6 +33,7 @@ body{
   .translate-x-full {
     transform: translateX(100%);
   }
+  width: 100%;
 }
 
 :host {
@@ -96,4 +97,19 @@ body{
 
 .container {
     height: 100vh;
+}
+
+@media (max-width: 1024px) {
+  .form-mobile {
+    width: 100%;
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+  
+  .auth-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
