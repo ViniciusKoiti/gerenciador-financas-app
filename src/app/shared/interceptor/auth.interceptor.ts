@@ -1,71 +1,57 @@
-import { Injectable } from '@angular/core';
-import { 
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
-  HttpErrorResponse
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { APP_ROUTES } from '@app/routes.constantes';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  private readonly publicPaths = new Set<string>([
-    '/auth/login',
-    '/auth/register',
-    '/public'
-  ]);
+const publicPaths = new Set<string>([
+  `/${APP_ROUTES.AUTH.LOGIN}`,
+  '/public'
+]);
 
-  private readonly publicUrlPatterns: RegExp[] = [
-    /^\/api\/v1\/public\/.*/,  
-    /^\/assets\/.*/,           
-    /^\/docs\/.*/             
-  ];
+const publicUrlPatterns: RegExp[] = [
+  /^\/api\/v1\/public\/.*/,  
+  /^\/assets\/.*/,           
+  /^\/docs\/.*/             
+];
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
-
-  intercept(
-    request: HttpRequest<any>, 
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    const path = new URL(request.url, window.location.origin).pathname;
-
-    if (this.isPublicPath(path)) {
-      return next.handle(request);
-    }
-
-    const token = this.authService.getToken();
-    
-    if (token) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-    }
-
-    return next.handle(request).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 || error.status === 403) {
-          this.authService.logout();
-          this.router.navigate(['/login']);
-        }
-        return throwError(() => error);
-      })
-    );
+function isPublicPath(path: string): boolean {
+  if (publicPaths.has(path)) {
+    return true;
   }
 
-  private isPublicPath(path: string): boolean {
-    if (this.publicPaths.has(path)) {
-      return true;
-    }
-
-    return this.publicUrlPatterns.some(pattern => pattern.test(path));
-  }
+  return publicUrlPatterns.some(pattern => pattern.test(path));
 }
+
+export const authInterceptor: HttpInterceptorFn = (request, next) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  const path = new URL(request.url, window.location.origin).pathname;
+
+  if (isPublicPath(path)) {
+    return next(request);
+  }
+
+  const token = authService.getToken();
+  
+  if (token) {
+    request = request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }
+
+  return next(request).pipe( 
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401 || error.status === 403) {
+        authService.logout();
+        router.navigate(['/login']);
+      }
+      return throwError(() => error);
+    })
+  );
+};
