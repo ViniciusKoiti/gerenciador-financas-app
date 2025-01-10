@@ -1,39 +1,80 @@
-import { ApiResponse } from "@app/models/apiResponse";
-import { AuthService } from "../services/auth.service";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { AuthService } from '../services/auth.service';
+import { environment } from '@app/enviroments/enviroments';
+import { ApiResponse } from '@app/models/api-response';
 
-export class HttpClient {
-    constructor(
-        private baseUrl: string,
-        private authService: AuthService
-    ) {}
+@Injectable({
+  providedIn: 'root'
+})
+export class HttpClientService {
+  constructor(
+    private http: HttpClient,
+  ) {}
 
-    private getHeaders(): HeadersInit {
-        const headers: HeadersInit = {
-            'Content-Type': 'application/json'
-        };
+  get<T>(endpoint: string): Observable<T> {
+    return this.http
+      .get<ApiResponse<T>>(`${environment.apiUrl}${endpoint}`)
+      .pipe(
+        map(response => {
+          if (response.statusCode >= 400) {
+            throw new Error(response.message);
+          }
+          return response.data as T;
+        }),
+        catchError(error => {
+          throw error?.error?.message || 'Erro na requisição';
+        })
+      );
+  }
 
-        if (this.authService.isAuthenticated()) {
-            headers['Authorization'] = `Bearer ${this.authService.getToken()}`;
-        }
+  post<T>(endpoint: string, body: any): Observable<T> {
+    return this.http
+      .post<ApiResponse<T>>(`${environment.apiUrl}${endpoint}`, body)
+      .pipe(
+        map(response => {
+          if (response.statusCode >= 400) {
+            throw new Error(response.message);
+          }
+          return response.data as T;
+        }),
+        catchError(error => {
+          throw error?.error?.message || 'Erro na requisição';
+        })
+      );
+  }
 
-        return headers;
-    }
+  put<T>(endpoint: string, body: any): Observable<T> {
+    return this.http
+      .put<ApiResponse<T>>(`${environment.apiUrl}${endpoint}`, body)
+      .pipe(
+        map(response => {
+          if (response.statusCode >= 400) {
+            throw new Error(response.message);
+          }
+          return response.data as T;
+        }),
+        catchError(error => {
+          throw error?.error?.message || 'Erro na requisição';
+        })
+      );
+  }
 
-    async get<T>(endpoint: string): Promise<ApiResponse<T>> {
-        try {
-            const response = await fetch(`${this.baseUrl}${endpoint}`, {
-                headers: this.getHeaders()
-            });
-            
-            const apiResponse: ApiResponse<T> = await response.json();
-            
-            if (!response.ok) {
-                throw new Error(apiResponse.message);
-            }
-            
-            return apiResponse;
-        } catch (error) {
-            throw error;
-        }
-    }
+  delete<T>(endpoint: string): Observable<T> {
+    return this.http
+      .delete<ApiResponse<T>>(`${environment.apiUrl}${endpoint}`)
+      .pipe(
+        map(response => {
+          if (response.statusCode >= 400) {
+            throw new Error(response.message);
+          }
+          return response.data as T;
+        }),
+        catchError(error => {
+          throw error?.error?.message || 'Erro na requisição';
+        })
+      );
+  }
 }

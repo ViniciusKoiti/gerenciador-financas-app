@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,6 +13,7 @@ import { AuthService } from '../../shared/services/auth.service';
 import { ILoginRequest } from '../../requests/login.request';
 import { ISignupRequest } from '../../requests/signup.request';
 import { Router } from '@angular/router';
+import { ROUTE_PATHS } from '@app/routes.constantes';
 
 @Component({
   selector: 'app-login',
@@ -53,7 +54,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForms();
-    window.addEventListener('resize', () => this.checkScreenSize());
+    this.checkScreenSize();
+    this.checkAuthAndRedirect();
   }
 
   initializeForms() {
@@ -68,9 +70,15 @@ export class LoginComponent implements OnInit {
       senha: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
-
+  @HostListener('window:resize', ['$event'])
   checkScreenSize() {
     this.isMobile = window.innerWidth < 1024;
+  }
+
+  private checkAuthAndRedirect(): void {
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate([ROUTE_PATHS.DASHBOARD]);
+    }
   }
 
 
