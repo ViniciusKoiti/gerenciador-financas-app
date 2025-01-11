@@ -1,0 +1,84 @@
+
+<div class="grid grid-cols-1 gap-1 mb-6">
+    <div [class]="getBackgroundClass('general')"
+         class="p-4 rounded-lg shadow-sm">
+        <div class="flex justify-center items-center mb-2">
+            <h3 class="font-semibold text-gray-800">
+                Total Geral
+            </h3>
+        </div>
+        
+        <div class="space-y-2">
+            <div class="flex justify-evenly items-center">
+                <span class="text-gray-600">Despesas</span>
+                <span class="text-green-600 font-medium">
+                    {{ formatCurrency(generalTotals.income) }}
+                </span>
+            </div>
+            
+            <div class="flex justify-evenly items-center">
+                <span class="text-gray-600">Receitas</span>
+                <span class="text-red-600 font-medium">
+                    {{ formatCurrency(generalTotals.expenses) }}
+                </span>
+            </div>
+            
+            <div class="flex justify-evenly items-center pt-2 border-t">
+                <span class="font-medium text-gray-600">Saldo</span>
+                <span [class]="getBalanceClass(generalTotals.balance)"
+                      class="font-semibold">
+                    {{ formatCurrency(generalTotals.balance) }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-1 mb-6">
+    
+
+
+
+    <div *ngFor="let total of totals | keyvalue;let first = first;"
+         [class]="getBackgroundClass(total.key)"
+         class="p-4 rounded-lg shadow-sm">
+      <div class="flex justify-between items-center mb-2"
+      >
+
+        <h3 class="font-semibold text-gray-800">
+          {{ getColumnTitle(total.key) }}
+        </h3>
+       
+      </div>
+      
+      <div class="space-y-2">
+        <div class="flex justify-between items-center">
+            <span class="text-gray-600">Despesas</span>
+        
+          <span class="text-green-600 font-medium">
+            {{ formatCurrency(total.value.income) }}
+          </span>
+        </div>
+        
+        <div class="flex justify-between items-center">
+            <span class="text-gray-600">Receitas</span>
+          <span class="text-red-600 font-medium">
+            {{ formatCurrency(total.value.expenses) }}
+          </span>
+        </div>
+        
+        <div class="flex justify-between items-center pt-2 border-t">
+            <span class="font-medium text-gray-600">Saldo</span>
+          <span [class]="getBalanceClass(total.value.balance)"
+                class="font-semibold">
+            {{ formatCurrency(total.value.balance) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>

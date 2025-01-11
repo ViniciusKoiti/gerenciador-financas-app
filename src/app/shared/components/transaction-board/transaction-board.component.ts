@@ -4,6 +4,7 @@ import { Transaction } from '@app/models/transation';
 
 import { CommonModule } from '@angular/common';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { TransactionTotalizatorComponent } from '../transaction-totalizator/transaction-totalizator.component';
 
 
 @Component({
@@ -11,6 +12,7 @@ import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from 
   imports: [
     CommonModule,
     DragDropModule,
+    TransactionTotalizatorComponent
   ],
   templateUrl: './transaction-board.component.html',
   styleUrl: './transaction-board.component.scss'
