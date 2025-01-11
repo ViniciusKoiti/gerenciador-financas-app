@@ -7,7 +7,7 @@ import { TransactionBoardComponent } from '../transaction-board/transaction-boar
  selector: 'app-dashboard-menu',
  standalone: true,
  imports: [CommonModule,
-   MatIconModule,
+  MatIconModule,
   TransactionBoardComponent
  ],
  templateUrl: "./dashboard-menu.component.html"
@@ -15,7 +15,7 @@ import { TransactionBoardComponent } from '../transaction-board/transaction-boar
 export class DashboardMenuComponent {
 
   isOpen = false;
- menuItems = [
+  menuItems = [
    { icon: 'home', text: 'Dashboard', link: '/dashboard' },
    { icon: 'dashboard', text: 'Kanban', badge: 'Pro', link: '/kanban' },
    { icon: 'inbox', text: 'Inbox', badge: '3', badgeColor: 'blue', link: '/inbox' },
@@ -23,11 +23,11 @@ export class DashboardMenuComponent {
    { icon: 'shopping_bag', text: 'Products', link: '/products' }
  ];
 
- getBadgeClass(item: any) {
+  getBadgeClass(item: any) {
    return item.badgeColor === 'blue' ? 'badge-blue' : 'badge-gray';
- }
+  }
 
- toggleMenu() {
-  this.isOpen = !this.isOpen;
- }
+  toggleMenu() {
+    this.isOpen = !this.isOpen;
+  }
 }

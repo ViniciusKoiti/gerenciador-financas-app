@@ -1,10 +1,10 @@
 <div class="min-h-screen bg-gray-50">
     <div *ngIf="isOpen" 
-         class="fixed inset-0 bg-gray-800 bg-opacity-50 z-30 lg:hidden"
+         class="fixed inset-0 bg-gray-800 bg-opacity-50 z-30"
          (click)="toggleMenu()">
     </div>
 
-    <div class="p-4 lg:hidden">
+    <div class="p-4">
       <button
         (click)="toggleMenu()"
         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
@@ -13,7 +13,7 @@
     </div>
 
     <div [ngClass]="{'translate-x-0': isOpen, '-translate-x-full': !isOpen}"
-         class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto bg-white transition-transform duration-300 ease-in-out lg:translate-x-0">
+         class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto bg-white transition-transform duration-300 ease-in-out">
       
       <div class="flex items-center justify-between mb-4">
         <h5 class="text-base font-semibold text-gray-500 uppercase">Menu</h5>
@@ -41,6 +41,6 @@
     </div>
 
     <app-transaction-board>
-        
+
     </app-transaction-board>
 </div>

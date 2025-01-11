@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gray-50 p-6">
+<div class="min-h-screen bg-gray-50 p-2">
     <div class="max-w-7xl mx-auto">
       <div class="mb-8 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-900">Quadro de Transações</h1>
@@ -10,18 +10,32 @@
         </button>
       </div>
   
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="mb-6">
+         <!-- <app-transaction-totals [columns]="columns"></app-transaction-totals> -->
+      </div>
+  
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  ex gap-6">
         <div
           *ngFor="let column of columns | keyvalue"
           class="flex flex-col rounded-lg"
         >
           <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-700">
-              {{ column.value.title }}
-            </h2>
-            <span class="px-2 py-1 bg-gray-200 rounded-full text-sm text-gray-600">
-              {{ column.value.items.length }}
-            </span>
+            <div class="flex items-center space-x-2">
+              <h2 class="text-lg font-semibold text-gray-700">
+                {{ column.value.title }}
+              </h2>
+              <span 
+                class="px-2 py-1 rounded-full text-sm"
+                [ngClass]="{
+                  'bg-red-100 text-red-700': column.value.id === 'toBePaid',
+                  'bg-yellow-100 text-yellow-700': column.value.id === 'intended',
+                  'bg-blue-100 text-blue-700': column.value.id === 'deadline',
+                  'bg-green-100 text-green-700': column.value.id === 'paid'
+                }"
+              >
+                {{ column.value.items.length }}
+              </span>
+            </div>
           </div>
   
           <div
@@ -30,15 +44,14 @@
             [class]="getStatusClass(column.value.id)"
             cdkDropList
             [cdkDropListData]="column.value.items"
-            [cdkDropListConnectedTo]="['todo', 'inProgress', 'done']"
+            [cdkDropListConnectedTo]="['toBePaid', 'intended', 'deadline', 'paid']"
             (cdkDropListDropped)="onDrop($event)"
           >
             <div
               *ngFor="let transaction of column.value.items"
-              class="bg-white rounded-lg shadow mb-3 cursor-move"
+              class="bg-white rounded-lg shadow mb-3 cursor-move hover:shadow-md transition-shadow"
               cdkDrag
             >
-              <!-- Card de Transação -->
               <div class="p-4">
                 <div class="flex items-center justify-between mb-2">
                   <div class="flex items-center space-x-2">
@@ -64,17 +77,38 @@
                     <span>{{ transaction.config.dueDate | date:'dd/MM/yyyy' }}</span>
                   </div>
                   
-                  <div *ngIf="transaction.config.recurrent" class="flex items-center space-x-1">
-                    <i class="material-icons text-base">loop</i>
-                    <span>Recorrente</span>
+                  <div class="flex items-center space-x-1">
+                    <i class="material-icons text-base">
+                      {{ 
+                        column.value.id === 'paid' ? 'check_circle' :
+                        column.value.id === 'deadline' ? 'schedule' :
+                        column.value.id === 'intended' ? 'lightbulb' : 'payment'
+                      }}
+                    </i>
+                    <span>{{ column.value.title }}</span>
                   </div>
                   
-                  <div *ngIf="transaction.config.installments" class="flex items-center space-x-1">
-                    <i class="material-icons text-base">payments</i>
-                    <span>Parcelado</span>
+                  <div class="flex items-center space-x-2">
+                    <div *ngIf="transaction.config.recurrent" 
+                         class="flex items-center space-x-1" 
+                         title="Recorrente">
+                      <i class="material-icons text-base">loop</i>
+                    </div>
+                    
+                    <div *ngIf="transaction.config.installments" 
+                         class="flex items-center space-x-1"
+                         title="Parcelado">
+                      <i class="material-icons text-base">payments</i>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
+            
+            <div *ngIf="column.value.items.length === 0" 
+                 class="flex flex-col items-center justify-center h-32 text-gray-400">
+              <i class="material-icons text-4xl mb-2">inbox</i>
+              <p>Nenhuma transação</p>
             </div>
           </div>
         </div>
