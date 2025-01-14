@@ -92,7 +92,7 @@ export class LoginComponent implements OnInit {
     const signupForm: ISignupRequest = this.signupForm.value;
     this.authService.signup(signupForm).subscribe({
       next: (response) => {
-        this.router.navigate(['/dashboard'])
+        this.router.navigate(['app/dashboard'])
         console.log('Signup successful', response);
       },
       error: (error) => {
