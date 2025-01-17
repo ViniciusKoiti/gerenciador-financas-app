@@ -1,0 +1,74 @@
+<h2 mat-dialog-title>Adicione Transação</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="transactionForm" class="w-full max-w-lg mx-auto">
+    <!-- Campo Descrição -->
+    <app-form-field 
+      class="w-full max-w-md mx-auto mb-4"
+      label="Descrição"
+      type="text"
+      formControlName="description"
+      placeholder="Digite uma descrição"
+      icon="description"
+      [errors]="{
+        'required': 'Descrição é obrigatória'
+      }"
+    ></app-form-field>
+
+    <!-- Campo Valor -->
+    <app-form-field 
+      class="w-full max-w-md mx-auto mb-4"
+      label="Valor"
+      type="number"
+      formControlName="amount"
+      placeholder="Digite o valor"
+      icon="attach_money"
+      [errors]="{
+        'required': 'Valor é obrigatório',
+        'min': 'O valor deve ser maior que zero'
+      }"
+    ></app-form-field>
+
+    <app-form-select
+      class="w-full mx-auto mb-4"
+      label="Tipo de Transação"
+      type="select"
+      formControlName="type"
+      placeholder="Selecione um tipo"
+      icon="category"
+      [options]="transactionTypes"
+      [errors]="{
+        'required': 'O tipo de transação é obrigatório'
+      }"
+    ></app-form-select>
+
+    <!-- Campo Data -->
+    <app-form-field 
+      class="w-full max-w-md mx-auto mb-4"
+      label="Data"
+      type="date"
+      formControlName="date"
+      placeholder="Selecione uma data"
+      icon="event"
+      [errors]="{
+        'required': 'A data é obrigatória'
+      }"
+    ></app-form-field>
+  </form>
+</mat-dialog-content>
+
+<div class="flex justify-between p-4">
+
+    <app-custom-button 
+    text="Cancelar" 
+    type="submit" 
+    [customClasses]="'w-44'"
+    (buttonClick)="cancel()"
+  ></app-custom-button>
+  <app-custom-button 
+  text="Salvar" 
+  type="submit" 
+  [customClasses]="'w-44'"
+  (buttonClick)="save()"
+></app-custom-button>
+</div>

@@ -1,0 +1,18 @@
+<mat-form-field appearance="outline" class="w-full mb-4">
+    <mat-label>{{ label }}</mat-label>
+    <mat-select
+      [placeholder]="placeholder"
+      [value]="value"
+      [disabled]="disabled"
+      (selectionChange)="onValueChange($event.value)"
+    >
+      <mat-option *ngFor="let option of options" [value]="option.value">
+        {{ option.label }}
+      </mat-option>
+    </mat-select>
+  
+    <mat-error *ngFor="let error of currentErrors">
+        {{ error }}
+      </mat-error>
+  </mat-form-field>
+  

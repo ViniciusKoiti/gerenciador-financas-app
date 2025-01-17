@@ -2,15 +2,10 @@
   <div class="max-w-7xl mx-auto">
     <div class="mb-8 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-gray-900">Transação</h1>
-      <button
-        routerLink="/transactions/new"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        Nova Transação
-      </button>
+ 
     </div>
-
-    <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 overflow-auto max-h-[500px] max-w-[1500px]">
+    <div class="w-full p-4">
+    <div class="grid grid-flow-col auto-cols-[320px] overflow-x-auto gap-4 pb-4">
       <div
         *ngFor="let category of categories"
         class="bg-white shadow rounded-lg p-6"
@@ -32,8 +27,10 @@
               {{ category.transactions.length }}
             </span>
           </div>
+          <app-add-button (click)="openTransationForm()">
 
-          <i class="material-icons mb-2">add</i>
+          </app-add-button>
+         
         </div>
 
         <div
@@ -71,6 +68,17 @@
           </div>
         </div>
       </div>
+      <div class="mb-4 flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <h2 class="text-lg font-semibold text-gray-700">
+            Adicionar Categoria 
+          </h2>
+        </div>
+          <app-add-button>
+            
+          </app-add-button>
+      </div>
+    </div>
     </div>
   </div>
 </div>

@@ -11,6 +11,9 @@ import { HttpClient } from '@angular/common/http';
 import { CategoriaService } from '@app/shared/services/category.service';
 import { AuthService } from '@app/shared/services/auth.service';
 import { IUser } from '@app/models/user';
+import { AddButtonComponent } from '../add-button/add-button.component';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { FormTransactionComponent } from '../form-transaction/form-transaction.component';
 
 
 @Component({
@@ -18,6 +21,8 @@ import { IUser } from '@app/models/user';
   imports: [
     CommonModule, 
     DragDropModule,
+    MatDialogModule,
+    AddButtonComponent,
   ],
   standalone: true,
   templateUrl: './transaction-board.component.html',
@@ -31,7 +36,8 @@ export class TransactionBoardComponent implements OnInit {
   connectedDropLists: string[] = [];
 
   constructor(private categoriaService: CategoriaService,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -75,5 +81,19 @@ export class TransactionBoardComponent implements OnInit {
       style: 'currency',
       currency: 'USD'
     }).format(amount);
+  }
+
+  openTransationForm(): void {
+    let dialogRef = this.dialog.open(FormTransactionComponent, {
+      height: '400px',
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Modal result:', result);
+      }
+    });
+
   }
 }
