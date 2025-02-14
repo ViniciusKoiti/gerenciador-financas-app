@@ -14,6 +14,7 @@ import { IUser } from '@app/models/user';
 import { AddButtonComponent } from '../add-button/add-button.component';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormTransactionComponent } from '../form-transaction/form-transaction.component';
+import { TransactionService } from '@app/shared/services/transaction.service';
 
 
 @Component({
@@ -36,6 +37,7 @@ export class TransactionBoardComponent implements OnInit {
   connectedDropLists: string[] = [];
 
   constructor(private categoriaService: CategoriaService,
+    private transactionService: TransactionService,
     private authService: AuthService,
     private dialog: MatDialog
   ) {}
@@ -89,10 +91,17 @@ export class TransactionBoardComponent implements OnInit {
       width: '600px',
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result: Transaction | undefined) => {
       if (result) {
-        console.log('Modal result:', result);
-      }
+        this.transactionService.saveTransaction(result).subscribe({
+          next: (response) => {
+            console.log("Teste");
+          },
+          error: (err) => {
+            console.error("Error ao criar transação")
+          }
+      })
+    }
     });
 
   }

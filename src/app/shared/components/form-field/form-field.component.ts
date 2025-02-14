@@ -30,12 +30,12 @@ import { MatInputModule } from '@angular/material/input';
 export class FormFieldComponent implements ControlValueAccessor {
   @Input() label: string = '';
   @Input() type: string = 'text';
+  @Input() value: any = '';
   @Input() placeholder: string = '';
   @Input() icon: string = '';
   @Input() errors: { [key: string]: string } = {};
   @Input() hidePassword: boolean = true;
 
-  value: any = '';
   disabled: boolean = false;
   onChange: any = () => {};
   onTouched: any = () => {};

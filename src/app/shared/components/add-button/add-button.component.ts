@@ -7,18 +7,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 @Component({
   selector: 'app-add-button',
   standalone: true,
-  imports: [        
+  imports: [
     CommonModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule
   ],
   template: `
-    <button 
-      mat-mini-fab 
+    <button
+      mat-mini-fab
       color="primary"
       [matTooltip]="tooltip"
-      class="!bg-white !shadow-md hover:!bg-gray-50"
+      class="!bg-white !shadow-md hover:!bg-gray-200"
       (click)="onClick()">
       <mat-icon class="text-gray-600">add</mat-icon>
     </button>

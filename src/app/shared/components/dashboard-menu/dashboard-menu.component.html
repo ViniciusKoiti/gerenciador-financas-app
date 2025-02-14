@@ -1,5 +1,5 @@
-<div class="min-h-screen bg-gray-50">
-    <div *ngIf="isOpen" 
+<div class="min-h-screen bg-gray-200">
+    <div *ngIf="isOpen"
          class="fixed inset-0 bg-gray-800 bg-opacity-50 z-30"
          (click)="toggleMenu()">
     </div>
@@ -14,7 +14,7 @@
 
     <div [ngClass]="{'translate-x-0': isOpen, '-translate-x-full': !isOpen}"
          class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto bg-white transition-transform duration-300 ease-in-out">
-      
+
       <div class="flex items-center justify-between mb-4">
         <h5 class="text-base font-semibold text-gray-500 uppercase">Menu</h5>
         <button
@@ -29,7 +29,7 @@
           <a [href]="item.link" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
             <mat-icon class="w-5 h-5 text-gray-500">{{item.icon}}</mat-icon>
             <span class="ms-3 flex-1">{{item.text}}</span>
-            <span *ngIf="item.badge" 
+            <span *ngIf="item.badge"
                   [ngClass]="{'text-blue-800 bg-blue-100': item.badgeColor === 'blue',
                              'text-gray-800 bg-gray-100': !item.badgeColor}"
                   class="inline-flex items-center justify-center px-2 ms-3 text-sm font-medium rounded-full">

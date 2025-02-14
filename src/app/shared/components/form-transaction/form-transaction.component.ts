@@ -53,6 +53,7 @@ export class FormTransactionComponent {
     if (this.transactionForm.valid) {
       this.dialogRef.close(this.transactionForm.value); 
     }
+    
   }
 
   cancel(): void {

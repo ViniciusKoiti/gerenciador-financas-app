@@ -2,13 +2,13 @@
   <div class="max-w-4xl mx-auto mt-8 overflow-hidden shadow-2xl rounded-3xl">
     <div class="relative grid lg:grid-cols-2 min-h-[600px]">
       <!-- Login Form -->
-     
-      
+
+
       <div class="p-8 w-full transition-transform duration-500 min-w-[300px]"
         [class.translate-x-full]="hideSignupForm"
         >
         <div class="signin" [class.hidden]="hideSignupForm">
-          <h1 class="text-2xl font-bold">Login</h1>
+          <h1 class="text-2xl font-bold" [class.hidden]="hideSignupForm">Login</h1>
 
           <!-- Social Auth - Escondido em mobile -->
           <div class="hidden md:flex justify-center gap-4 mb-6 social-auth">
@@ -23,44 +23,44 @@
             </button>
           </div>
 
-          <p class="text-gray-600 mb-6">ou use sua conta</p>
+          <p class="text-gray-600 mb-6" [class.hidden]="hideSignupForm">ou use sua conta</p>
         </div>
-      
+
         <form [formGroup]="loginForm" (ngSubmit)="onLogin()" [class.hidden]="hideSignupForm">
-          <app-form-field 
+          <app-form-field
             class="w-full max-w-md mx-auto mb-4"
-            label="Email" 
-            type="email" 
+            label="Email"
+            type="email"
             formControlName="email"
             placeholder="Digite seu email"
-            icon="email" 
+            icon="email"
             [errors]="{
               'required': 'Email é obrigatório',
               'email': 'Email inválido'
             }"
           ></app-form-field>
 
-          <app-form-field 
+          <app-form-field
             class="w-full max-w-md mx-auto mb-4"
-            label="Senha" 
-            type="password" 
+            label="Senha"
+            type="password"
             formControlName="senha"
             placeholder="Digite sua senha"
             [errors]="{
               'required': 'Senha é obrigatória'
             }"
           ></app-form-field>
-          
+
           <div class="flex justify-center items-center p-4">
             <a class="text-primary-500 hover:underline">
               Esqueceu a senha?
             </a>
           </div>
 
-          <app-custom-button 
-            text="Entrar" 
-            type="submit" 
-            [disabled]="loginForm.invalid" 
+          <app-custom-button
+            text="Entrar"
+            type="submit"
+            [disabled]="loginForm.invalid"
             [customClasses]="'w-full'"
             (buttonClick)="onLogin()"
           ></app-custom-button>
@@ -77,45 +77,45 @@
       </div>
 
       <!-- Signup Form -->
-      <div 
-        class="absolute top-0 left-0 h-full p-8 bg-white duration-500 
-        w-full 
-        sm:w-full 
-        md:w-full 
+      <div
+        class="absolute top-0 left-0 h-full p-8 bg-white duration-500
+        w-full
+        sm:w-full
+        md:w-full
         lg:w-6/12"
         [class.translate-x-0]="hideSignupForm"
         [class.-translate-x-full]="!hideSignupForm">
         <h1 class="text-2xl font-bold mb-6 text-center">Cadastre-se</h1>
         <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
-          <app-form-field 
+          <app-form-field
             class="w-full max-w-md mx-auto mb-4"
-            label="Nome" 
-            type="text" 
+            label="Nome"
+            type="text"
             formControlName="nome"
             placeholder="Digite seu nome"
-            icon="person" 
+            icon="person"
             [errors]="{
               'required': 'Nome é obrigatório'
             }"
           ></app-form-field>
 
-          <app-form-field 
+          <app-form-field
             class="w-full max-w-md mx-auto mb-4"
-            label="Email" 
-            type="email" 
+            label="Email"
+            type="email"
             formControlName="email"
             placeholder="Digite seu email"
-            icon="email" 
+            icon="email"
             [errors]="{
               'required': 'Email é obrigatório',
               'email': 'Email inválido'
             }"
           ></app-form-field>
 
-          <app-form-field 
+          <app-form-field
             class="w-full max-w-md mx-auto mb-4"
-            label="Senha" 
-            type="password" 
+            label="Senha"
+            type="password"
             formControlName="senha"
             placeholder="Digite sua senha"
             [errors]="{
@@ -125,14 +125,14 @@
           ></app-form-field>
 
           <div class="flex justify-center items-center w-full">
-            <app-custom-button 
-              
-              text="Cadastrar-se" 
-              type="submit" 
+            <app-custom-button
+
+              text="Cadastrar-se"
+              type="submit"
               [disabled]="isSaving"
-              [isGradient]="true" 
+              [isGradient]="true"
               [customClasses]="'w-48 border-0'"
-             
+
             ></app-custom-button>
           </div>
 
@@ -149,20 +149,20 @@
       <!-- Side Panel - Escondido em mobile -->
       @if (!isMobile) {
         <div class="lg:flex bg-gradient-to-r from-yellow-400 to-yellow-500 p-8 text-white flex-col justify-center items-center text-center">
-          <h1 class="text-3xl font-bold mb-4 transition-opacity duration-300" 
+          <h1 class="text-3xl font-bold mb-4 transition-opacity duration-300"
               [class.opacity-0]="isTransitioning">
             {{hideSignupForm ? "Olá, amigo!" : "Bem vindo de volta"}}
           </h1>
-          <p class="mb-8 transition-opacity duration-300" 
+          <p class="mb-8 transition-opacity duration-300"
              [class.opacity-0]="isTransitioning">
             {{!hideSignupForm
               ? "Para se manter conectado conosco, faça login com suas informações pessoais"
               : "Entre com seus dados pessoais e inicie seu gerenciamento conosco"}}
           </p>
-          <app-custom-button 
-            [text]="!hideSignupForm ? 'Registrar-se' : 'Fazer Login'" 
+          <app-custom-button
+            [text]="!hideSignupForm ? 'Registrar-se' : 'Fazer Login'"
             type="button"
-          
+
             [customClasses]="'w-48 border-0 hover:bg-white hover:text-yellow-500 transition-colors'"
             (buttonClick)="toggleMode()"
           ></app-custom-button>

@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOptionModule } from '@angular/material/core';
-import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-form-select',
@@ -16,16 +16,22 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ],
   templateUrl: './form-select.component.html',
   styleUrls: ['./form-select.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FormSelectComponent),
+      multi: true,
+    },
+  ],
 })
 export class FormSelectComponent implements ControlValueAccessor {
-  @Input() label: string = '';
-  @Input() placeholder: string = '';
-  @Input() disabled: boolean = false; 
+  @Input() label: string = ''; 
+  @Input() placeholder: string = ''; 
+  @Input() disabled: boolean = false;
   @Input() options: { value: any; label: string }[] = []; 
   @Input() errors: { [key: string]: string } = {};
 
   value: any; 
-
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
 
@@ -41,7 +47,7 @@ export class FormSelectComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
 
