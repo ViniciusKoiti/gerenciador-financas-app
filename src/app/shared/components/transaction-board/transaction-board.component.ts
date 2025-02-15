@@ -3,7 +3,14 @@ import { TransactionType } from '@app/models/transaction-type';
 import { Transaction } from '@app/models/transation';
 
 import { CommonModule } from '@angular/common';
-import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  CdkDragEnd,
+  CdkDragStart,
+  DragDropModule,
+  moveItemInArray,
+  transferArrayItem
+} from '@angular/cdk/drag-drop';
 import { TransactionTotalizatorComponent } from '../transaction-totalizator/transaction-totalizator.component';
 import {delay, map, Observable, of, throwError} from 'rxjs';
 import { Category } from '@app/models/category';
@@ -17,6 +24,7 @@ import { FormTransactionComponent } from '../form-transaction/form-transaction.c
 import { TransactionService } from '@app/shared/services/transaction.service';
 import {catchError} from 'rxjs/operators';
 import {ApiResponse} from '@models/api-response';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 
 
 @Component({
@@ -31,11 +39,13 @@ import {ApiResponse} from '@models/api-response';
   standalone: true,
   templateUrl: './transaction-board.component.html',
   styleUrls: ['./transaction-board.component.scss'],
+
 })
 export class TransactionBoardComponent implements OnInit {
   isLoading: boolean = true;
   categories: Category[] = [];
   actualUser?: IUser | undefined;
+  isDragging = false;
 
   connectedDropLists: string[] = [];
 
@@ -60,6 +70,20 @@ export class TransactionBoardComponent implements OnInit {
       this.connectedDropLists = this.categories.map(category => category.name);
       this.isLoading = false;
     });
+  }
+
+  onDragCategoryStarted(event: CdkDragStart) {
+    this.isDragging = true;
+  }
+
+  onDragCategoryEnded(event: CdkDragEnd) {
+    this.isDragging = false;
+  }
+
+
+  dropCategory(event: CdkDragDrop<Category[]>) {
+    moveItemInArray(this.categories, event.previousIndex, event.currentIndex);
+    this.categories = [...this.categories];
   }
 
   onDrop(event: CdkDragDrop<Transaction[]>) {

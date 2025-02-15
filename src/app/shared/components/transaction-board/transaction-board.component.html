@@ -1,89 +1,97 @@
 <app-transaction-totalizator [categories]="categories">
-
 </app-transaction-totalizator>
 
-
-<div  class="bg-gray-150 m-3 p-2">
+<div class="bg-gray-150 m-3 p-2">
   <div class="max-w-9xl">
     <div class="mb-8 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-gray-900">Transação</h1>
-
+      <h1 class="text-2xl font-bold text-gray-900">Transações</h1>
     </div>
+
     <div class="w-full p-4">
-    <div class="grid grid-flow-col auto-cols-[320px] overflow-x-auto gap-4 pb-4">
       <div
-        *ngFor="let category of categories"
-        class="bg-white shadow rounded-lg p-6"
+        cdkDropList
+        [cdkDropListData]="categories"
+        (cdkDropListDropped)="dropCategory($event)"
+        class="grid grid-flow-col auto-cols-[320px] overflow-x-auto gap-4 pb-4"
       >
-        <div class="mb-4 flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <h2 class="text-lg font-semibold text-gray-700">
-              {{ category.name }}
-            </h2>
-            <span
-              class="px-2 py-1 rounded-full text-sm"
-              [ngClass]="{
-                'bg-red-100 text-red-700': category.name === 'A Pagar',
-                'bg-yellow-100 text-yellow-700': category.name === 'Pretendidas',
-                'bg-blue-100 text-blue-700': category.name === 'Prazo',
-                'bg-green-100 text-green-700': category.name === 'Pagas'
-              }"
-            >
-              {{ category.transactions.length }}
-            </span>
-          </div>
-          <app-add-button (click)="openTransationForm(category)">
-
-          </app-add-button>
-
-        </div>
-
         <div
-          cdkDropList
-          [id]="category.name"
-          [cdkDropListData]="category.transactions"
-          [cdkDropListConnectedTo]="connectedDropLists"
-          (cdkDropListDropped)="onDrop($event)"
-          class="flex flex-col space-y-3 p-4 rounded-lg bg-gray-200"
+          *ngFor="let category of categories"
+          cdkDrag
+          class="bg-white shadow rounded-lg p-6 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+          (cdkDragStarted)="onDragCategoryStarted($event)"
+          (cdkDragEnded)="onDragCategoryEnded($event)"
+          [cdkDragDisabled]="isDragging"
         >
-          <div
-            *ngFor="let transaction of category.transactions"
-            class="bg-gray-100 rounded-lg shadow-sm p-4 cursor-move hover:shadow-md transition-shadow"
-            cdkDrag
-          >
-            <div class="flex items-center justify-between">
-              <h3 class="font-medium text-gray-900">
-                {{ transaction.description }}
-              </h3>
+          <div class="mb-4 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <h2 class="text-lg font-semibold text-gray-700">
+                {{ category.name }}
+              </h2>
               <span
-                [ngClass]="transaction.type === 'RECEITA' ? 'text-green-600' : 'text-red-600'"
-                class="font-semibold"
+                class="px-2 py-1 rounded-full text-sm"
+                [ngClass]="{
+                  'bg-red-100 text-red-700': category.name === 'A Pagar',
+                  'bg-yellow-100 text-yellow-700': category.name === 'Pretendidas',
+                  'bg-blue-100 text-blue-700': category.name === 'Prazo',
+                  'bg-green-100 text-green-700': category.name === 'Pagas'
+                }"
               >
-                {{ transaction.type === 'RECEITA' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
+                {{ category.transactions.length }}
               </span>
             </div>
-            <div class="text-sm text-gray-500">
-              <span>Due: {{ transaction.config.dueDate | date:'dd/MM/yyyy' }}</span>
+            <app-add-button (click)="openTransationForm(category)">
+            </app-add-button>
+          </div>
+
+          <div
+            cdkDropList
+            [id]="category.name"
+            [cdkDropListData]="category.transactions"
+            [cdkDropListConnectedTo]="connectedDropLists"
+            (cdkDropListDropped)="onDrop($event)"
+            class="flex flex-col space-y-3 p-4 rounded-lg bg-gray-300 min-h-[200px]"
+          >
+            <div
+              *ngFor="let transaction of category.transactions"
+              cdkDrag
+              class="bg-gray-100 rounded-lg shadow-sm p-4 cursor-move hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center justify-between">
+                <h3 class="font-medium text-gray-900">
+                  {{ transaction.description }}
+                </h3>
+                <span
+                  [ngClass]="transaction.type === 'RECEITA' ? 'text-green-600' : 'text-red-600'"
+                  class="font-semibold"
+                >
+                  {{ transaction.type === 'RECEITA' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
+                </span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <span>Due: {{ transaction.config.dueDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+
+            <div
+              *ngIf="category.transactions.length === 0"
+              class="text-gray-400 text-center py-4"
+            >
+              <i class="material-icons text-4xl mb-2">inbox</i>
+              <p>Não há transações</p>
             </div>
           </div>
+        </div>
 
-          <div *ngIf="category.transactions.length === 0" class="text-gray-400 text-center py-4">
-            <i class="material-icons text-4xl mb-2">inbox</i>
-            <p>Não há transações</p>
+        <div class="bg-white shadow rounded-lg p-5 flex items-center justify-between h-[fit-content] ">
+          <div class="text-center w-11/12 d-flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-gray-700">
+              Adicionar Categoria
+            </h2>
+            <app-add-button>
+            </app-add-button>
           </div>
         </div>
       </div>
-      <div class="mb-4 flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <h2 class="text-lg font-semibold text-gray-700">
-            Adicionar Categoria
-          </h2>
-        </div>
-          <app-add-button>
-
-          </app-add-button>
-      </div>
-    </div>
     </div>
   </div>
 </div>
