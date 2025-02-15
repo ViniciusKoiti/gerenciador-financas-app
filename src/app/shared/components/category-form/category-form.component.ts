@@ -7,6 +7,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {FormFieldComponent} from '@shared/components/form-field/form-field.component';
 import {FormSelectComponent} from '@shared/components/form-select/form-select.component';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-category-form',
@@ -20,7 +21,8 @@ import {MatSlideToggle} from '@angular/material/slide-toggle';
     MatButtonModule,
     FormFieldComponent,
     FormSelectComponent,
-    MatSlideToggle
+    MatSlideToggle,
+    MatIcon
   ],
   templateUrl: './category-form.component.html'
 })

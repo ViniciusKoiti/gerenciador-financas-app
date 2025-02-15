@@ -1,4 +1,8 @@
-<h2 mat-dialog-title>Adicione Categoria</h2>
+<div class="d-flex items-center justify-between px-5">
+  <h2 mat-dialog-title>Adicione Categoria</h2>
+  <mat-icon fontIcon="close"></mat-icon>
+</div>
+
 
 <mat-dialog-content>
   <form [formGroup]="categoryForm" class="w-full max-w-lg mx-auto">
@@ -48,17 +52,14 @@
 <div class="flex justify-between p-4">
   <app-custom-button
     text="Cancelar"
-    variant="secondary"
-    [outline]="true"
+    variant="danger"
     (buttonClick)="cancel()"
     >
   </app-custom-button>
   <app-custom-button
     text="Salvar"
     type="submit"
-    variant="secondary"
-    [outline]="true"
-    [customClasses]="'w-44'"
+    variant="success"
     (buttonClick)="save()"
   ></app-custom-button>
 </div>
