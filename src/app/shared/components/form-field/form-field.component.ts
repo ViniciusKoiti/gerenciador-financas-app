@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatError, MatFormFieldModule} from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    MatError,
     FormsModule,
     ReactiveFormsModule
   ],
@@ -37,10 +38,19 @@ export class FormFieldComponent implements ControlValueAccessor {
   @Input() hidePassword: boolean = true;
 
   disabled: boolean = false;
+  touched: boolean = false;
   onChange: any = () => {};
-  onTouched: any = () => {};
+  onTouched: any = () => {
+    this.touched = true;
+  };
 
+  onBlur(){
+    this.touched = true;
+    this.onTouched();
+  }
   get currentErrors(): string[] {
+
+    console.log(this.errors);
     if (!this.errors) return [];
     return Object.values(this.errors).filter(error => error);
   }

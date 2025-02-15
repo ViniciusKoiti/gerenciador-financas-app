@@ -30,14 +30,14 @@
     ></app-form-field>
 
     <app-form-select
-      class="w-full mx-auto max-w-md mb-4"
       label="Tipo de Transação"
       formControlName="type"
       placeholder="Selecione um tipo"
       [options]="transactionTypes"
+      icon="payment"
       [errors]="{
-        'required': 'O tipo de transação é obrigatório'
-      }"
+    'required': 'O tipo de transação é obrigatório'
+  }"
     ></app-form-select>
 
     <app-form-field
@@ -60,12 +60,14 @@
     <app-custom-button
     text="Cancelar"
     type="submit"
+    [isGradient]="true"
     [customClasses]="'w-44'"
     (buttonClick)="cancel()"
   ></app-custom-button>
   <app-custom-button
   text="Salvar"
   type="submit"
+  [isGradient]="true"
   [customClasses]="'w-44'"
   (buttonClick)="save()"
 ></app-custom-button>

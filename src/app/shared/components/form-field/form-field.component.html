@@ -6,18 +6,24 @@
            [value]="value"
            [disabled]="disabled"
            (input)="onInputChange($event)"
-           (blur)="onTouched()">
-    
-    <mat-icon matSuffix 
+           (blur)="onBlur()">
+
+    <mat-icon matSuffix
               *ngIf="type === 'password'"
               (click)="togglePassword()"
               class="cursor-pointer">
       {{hidePassword ? 'visibility_off' : 'visibility'}}
     </mat-icon>
-    
+
     <mat-icon matSuffix *ngIf="icon && type !== 'password'">{{ icon }}</mat-icon>
-    
-    <mat-error *ngFor="let error of currentErrors">
-      {{ error }}
-    </mat-error>
+
+
+
+
   </mat-form-field>
+
+<ng-container *ngIf="touched">
+  <mat-error *ngFor="let error of currentErrors">
+    {{ error }}
+  </mat-error>
+</ng-container>

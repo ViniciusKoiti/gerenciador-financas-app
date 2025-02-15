@@ -27,7 +27,6 @@ import { ROUTE_PATHS } from '@app/routes.constantes';
     MatTabsModule,
     MatButtonModule,
     CustomButtonComponent,
-
     FormFieldComponent,
   ],
   templateUrl: './login.component.html',
@@ -36,11 +35,8 @@ import { ROUTE_PATHS } from '@app/routes.constantes';
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   signupForm!: FormGroup;
-  hideLoginForm: boolean = false;
   hideSignupForm: boolean = false;
   isTransitioning: boolean = false;
-  hideLoginPassword: boolean = false;
-  hideSignupPassword: boolean = false;
 
   isSaving: boolean = false;
   isMobile = false;
@@ -93,7 +89,6 @@ export class LoginComponent implements OnInit {
     this.authService.signup(signupForm).subscribe({
       next: (response) => {
         this.router.navigate(['app/dashboard'])
-        console.log('Signup successful', response);
       },
       error: (error) => {
         console.error('Request failed', error);
@@ -128,8 +123,8 @@ export class LoginComponent implements OnInit {
 
       setTimeout(() => {
         this.isTransitioning = false;
-      }, 300); // Metade do tempo da transição para voltar a mostrar
-    }, 150); // Tempo 
+      }, 300);
+    }, 150);
   }
 
   get passwordControl(): FormControl {

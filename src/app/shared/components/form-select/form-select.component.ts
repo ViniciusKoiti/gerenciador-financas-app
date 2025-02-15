@@ -1,9 +1,10 @@
 import { Component, Input, forwardRef } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, AbstractControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOptionModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-form-select',
@@ -13,6 +14,7 @@ import { MatOptionModule } from '@angular/material/core';
     MatSelectModule,
     MatFormFieldModule,
     MatOptionModule,
+    MatIconModule
   ],
   templateUrl: './form-select.component.html',
   styleUrls: ['./form-select.component.scss'],
@@ -25,13 +27,14 @@ import { MatOptionModule } from '@angular/material/core';
   ],
 })
 export class FormSelectComponent implements ControlValueAccessor {
-  @Input() label: string = ''; 
-  @Input() placeholder: string = ''; 
+  @Input() label: string = '';
+  @Input() placeholder: string = '';
   @Input() disabled: boolean = false;
-  @Input() options: { value: any; label: string }[] = []; 
+  @Input() options: { value: any; label: string }[] = [];
   @Input() errors: { [key: string]: string } = {};
+  @Input() icon : string = '' ;
 
-  value: any; 
+  value: any;
   private onChange: (value: any) => void = () => {};
   private onTouched: () => void = () => {};
 

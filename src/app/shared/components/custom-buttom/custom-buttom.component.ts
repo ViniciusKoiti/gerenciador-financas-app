@@ -92,9 +92,9 @@ export class CustomButtonComponent implements OnInit, OnChanges {
 
   private getSolidVariantClasses(): string {
     const variants = {
-      'primary': 'bg-blue-600 text-white hover:bg-blue-700 ',
-      'secondary': 'bg-gray-600 text-white hover:bg-gray-700 ',
-      'danger': 'bg-red-600 text-white hover:bg-red-700 ',
+      'primary': 'bg-yellow-500 text-white hover:bg-yellow-600 hover:text-white',
+      'secondary': 'bg-gray-600 text-white hover:bg-gray-700 hover:text-white',
+      'danger': 'bg-red-600 text-white hover:bg-red-700 hover:text-white',
       'success': 'bg-green-600 text-white hover:bg-green-700 ',
       'warning': 'bg-yellow-500 text-white hover:bg-yellow-600 '
     };
@@ -103,7 +103,7 @@ export class CustomButtonComponent implements OnInit, OnChanges {
 
   private getOutlineVariantClasses(): string {
     const variants = {
-      'primary': 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50 ',
+      'primary': 'border-2 border-yellow-600 text-blue-600 hover:bg-yellow-50 ',
       'secondary': 'border-2 border-gray-600 text-gray-600 hover:bg-gray-50 ',
       'danger': 'border-2 border-red-600 text-red-600 hover:bg-red-50 ',
       'success': 'border-2 border-green-600 text-green-600 hover:bg-green-50 ',
@@ -114,7 +114,7 @@ export class CustomButtonComponent implements OnInit, OnChanges {
 
   private getGradientClasses(): string {
     const gradients = {
-      'primary': 'bg-gradient-to-r from-blue-500 to-blue-600',
+      'primary': 'bg-gradient-to-r from-yellow-500 to-yellow-600',
       'secondary': 'bg-gradient-to-r from-gray-500 to-gray-600',
       'danger': 'bg-gradient-to-r from-red-500 to-red-600',
       'success': 'bg-gradient-to-r from-green-500 to-green-600',

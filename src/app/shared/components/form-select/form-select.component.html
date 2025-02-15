@@ -1,4 +1,4 @@
-<mat-form-field appearance="outline" class="w-full mb-4">
+<mat-form-field appearance="outline" class="w-11/12 m-5  mb-4">
     <mat-label>{{ label }}</mat-label>
     <mat-select
       [placeholder]="placeholder"
@@ -10,9 +10,10 @@
         {{ option.label }}
       </mat-option>
     </mat-select>
-  
+
+  <mat-icon matSuffix *ngIf="icon">{{ icon }}</mat-icon>
+
     <mat-error *ngFor="let error of currentErrors">
         {{ error }}
       </mat-error>
   </mat-form-field>
-  
