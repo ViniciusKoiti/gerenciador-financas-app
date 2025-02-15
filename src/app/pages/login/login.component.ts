@@ -135,20 +135,18 @@ export class LoginComponent implements OnInit {
     return this.loginForm.get('email') as FormControl;
   }
 
-  get nameControl(): FormControl {
+  get nameSignupControl(): FormControl {
     return this.signupForm.get('nome') as FormControl;
   }
 
   get emailSignupControl(): FormControl {
+
+    console.log(this.signupForm.get('email')?.value)
     return this.signupForm.get('email') as FormControl;
   }
 
   get passwordSignupControl(): FormControl {
     return this.signupForm.get('senha') as FormControl;
-  }
-
-  get email() {
-    return this.loginForm.get('email');
   }
 
   get password() {

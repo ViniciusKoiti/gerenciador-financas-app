@@ -1,7 +1,14 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, forwardRef, Input } from '@angular/core';
-import { ControlValueAccessor, FormControl, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+import {Component, forwardRef, Input, Optional, Self} from '@angular/core';
+import {
+  ControlValueAccessor,
+  FormControl,
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+  NgControl,
+  ReactiveFormsModule
+} from '@angular/forms';
 import {MatError, MatFormFieldModule} from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -36,9 +43,12 @@ export class FormFieldComponent implements ControlValueAccessor {
   @Input() icon: string = '';
   @Input() errors: { [key: string]: string } = {};
   @Input() hidePassword: boolean = true;
+  @Input() control!: FormControl;
 
   disabled: boolean = false;
   touched: boolean = false;
+
+
   onChange: any = () => {};
   onTouched: any = () => {
     this.touched = true;
@@ -49,10 +59,46 @@ export class FormFieldComponent implements ControlValueAccessor {
     this.onTouched();
   }
   get currentErrors(): string[] {
+    if (!this.control || !this.control.errors || !this.touched) {
+      return [];
+    }
 
-    console.log(this.errors);
-    if (!this.errors) return [];
-    return Object.values(this.errors).filter(error => error);
+    const errors = this.control.errors;
+    const messages: string[] = [];
+    console.log(errors)
+    console.log(this.errors)
+    console.log(this.value);
+    if (errors['required']) {
+      messages.push(this.errors['required'] || 'Este campo é obrigatório.');
+      return messages;
+    }
+
+
+    if (errors['minlength']) {
+      messages.push(
+        this.errors['minlength'] ||
+        `O tamanho mínimo é ${errors['minlength'].requiredLength} caracteres. Você digitou ${errors['minlength'].actualLength}.`
+      );
+      return messages;
+    }
+    if (errors['maxlength']) {
+      messages.push(
+        this.errors['maxlength'] ||
+        `O tamanho máximo permitido é ${errors['maxlength'].requiredLength} caracteres.`
+      );
+      return messages;
+    }
+    if(errors['pattern']){
+      messages.push(this.errors['pattern'] || 'Formato inválido.');
+      return messages;
+    }
+
+    if(errors['email']){
+      messages.push(this.errors['email'] || 'Este email é inválido');
+      return messages;
+    }
+
+    return messages;
   }
 
   togglePassword(): void {

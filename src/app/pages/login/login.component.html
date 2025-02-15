@@ -33,6 +33,7 @@
             type="email"
             formControlName="email"
             placeholder="Digite seu email"
+            [control]="emailControl"
             icon="email"
             [errors]="{
               'required': 'Email é obrigatório',
@@ -44,6 +45,7 @@
             class="w-full max-w-md mx-auto mb-4"
             label="Senha"
             type="password"
+            [control]="passwordControl"
             formControlName="senha"
             placeholder="Digite sua senha"
             [errors]="{
@@ -60,14 +62,15 @@
           <app-custom-button
             text="Entrar"
             type="submit"
-            [disabled]="loginForm.invalid"
+            color="primary"
+            [isGradient]="true"
             [customClasses]="'w-full'"
             (buttonClick)="onLogin()"
           ></app-custom-button>
 
           <!-- Mobile Toggle Button -->
           @if (isMobile) {
-            <div class="w-12/12 flex justify-center text-center text-yellow-500 hover:underline"
+            <div class="w-12/12 flex justify-center text-center hover:underline"
                 (click)="toggleMode()"
                 >
                 Não tem uma conta? Cadastre-se
@@ -92,6 +95,7 @@
             label="Nome"
             type="text"
             formControlName="nome"
+            [control]="nameSignupControl"
             placeholder="Digite seu nome"
             icon="person"
             [errors]="{
@@ -104,6 +108,7 @@
             label="Email"
             type="email"
             formControlName="email"
+            [control]="emailSignupControl"
             placeholder="Digite seu email"
             icon="email"
             [errors]="{
@@ -116,6 +121,7 @@
             class="w-full max-w-md mx-auto mb-4"
             label="Senha"
             type="password"
+            [control]="passwordSignupControl"
             formControlName="senha"
             placeholder="Digite sua senha"
             [errors]="{
@@ -128,8 +134,8 @@
             <app-custom-button
 
               text="Cadastrar-se"
-              color="primary"
               type="submit"
+              color="primary"
               [disabled]="isSaving"
               [isGradient]="true"
               [customClasses]="'w-48 border-0'"
@@ -163,8 +169,9 @@
           <app-custom-button
             [text]="!hideSignupForm ? 'Registrar-se' : 'Fazer Login'"
             type="button"
+             [isGradient]="true"
 
-            [customClasses]="'w-48 border-0 hover:bg-white hover:text-yellow-500 transition-colors'"
+            [customClasses]="'w-48 border-0 hover:bg-white transition-colors'"
             (buttonClick)="toggleMode()"
           ></app-custom-button>
         </div>
