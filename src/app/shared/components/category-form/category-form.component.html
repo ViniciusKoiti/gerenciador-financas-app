@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>Adicione Categoria</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="categoryForm" class="w-full max-w-lg mx-auto">
+    <app-form-field
+      class="w-full max-w-md mx-auto my-4"
+      label="Nome"
+      type="text"
+      formControlName="name"
+      placeholder="Digite o nome da categoria"
+      icon="folder"
+      [errors]="{
+        'required': 'Nome é obrigatório'
+      }"
+    ></app-form-field>
+
+    <app-form-field
+      class="w-full max-w-md mx-auto mb-4"
+      label="Descrição"
+      type="text"
+      formControlName="description"
+      placeholder="Digite uma descrição"
+      icon="description"
+      [errors]="{
+        'required': 'Descrição é obrigatória'
+      }"
+    ></app-form-field>
+
+    <app-form-select
+      class="w-full mx-auto max-w-md mb-4"
+      label="Ícone"
+      formControlName="icon"
+      placeholder="Selecione um ícone"
+      [options]="iconOptions"
+      [errors]="{
+        'required': 'O ícone é obrigatório'
+      }"
+    ></app-form-select>
+
+    <div class="w-full max-w-md mx-auto mb-4 flex items-center">
+      <mat-slide-toggle formControlName="isActive">
+        Categoria Ativa
+      </mat-slide-toggle>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<div class="flex justify-between p-4">
+  <app-custom-button
+    text="Cancelar"
+    variant="secondary"
+    [outline]="true"
+    >
+  </app-custom-button>
+  <app-custom-button
+    text="Salvar"
+    type="submit"
+    variant="secondary"
+    [outline]="true"
+    [customClasses]="'w-44'"
+    (buttonClick)="save()"
+  ></app-custom-button>
+</div>

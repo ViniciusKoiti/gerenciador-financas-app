@@ -25,6 +25,12 @@ import { TransactionService } from '@app/shared/services/transaction.service';
 import {catchError} from 'rxjs/operators';
 import {ApiResponse} from '@models/api-response';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {MatIcon} from '@angular/material/icon';
+import {MatButton, MatIconButton} from '@angular/material/button';
+import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
+import {MatCardContent} from '@angular/material/card';
+import {MatButtonToggle, MatButtonToggleGroup} from '@angular/material/button-toggle';
+import {CategoryFormComponent} from '@shared/components/category-form/category-form.component';
 
 
 @Component({
@@ -35,6 +41,15 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
     MatDialogModule,
     AddButtonComponent,
     TransactionTotalizatorComponent,
+    MatIcon,
+    MatButton,
+    MatMenuTrigger,
+    MatIconButton,
+    MatMenuItem,
+    MatMenu,
+    MatCardContent,
+    MatButtonToggleGroup,
+    MatButtonToggle,
   ],
   standalone: true,
   templateUrl: './transaction-board.component.html',
@@ -125,6 +140,23 @@ export class TransactionBoardComponent implements OnInit {
     }).format(amount);
   }
 
+  calculateTotals() {
+    this.categories = this.categories.map(category => ({
+      ...category,
+      totalAmount: category.transactions.reduce((acc, curr) => acc + curr.amount, 0)
+    }));
+  }
+
+
+  sortTransactions(category: any, criteria: 'date' | 'amount') {
+    category.transactions.sort((a: any, b: any) => {
+      if (criteria === 'date') {
+        return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime();
+      }
+      return b.amount - a.amount;
+    });
+  }
+
   openTransationForm(category: Category, transaction: Transaction | null = null): void {
     let dialogRef = this.dialog.open(FormTransactionComponent, {
       height: '400px',
@@ -137,6 +169,22 @@ export class TransactionBoardComponent implements OnInit {
         this.findCategories()
     }
     });
+
+  }
+
+  openCategoryForm(){
+    let dialogRef = this.dialog.open(CategoryFormComponent, {
+      height: '400px',
+      width: '600px',
+    })
+
+    dialogRef.afterClosed().subscribe((result: Transaction | undefined) => {
+      if (result) {
+        this.findCategories()
+      }
+    });
+
+
 
   }
 }
