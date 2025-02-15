@@ -13,4 +13,3 @@ export interface Transaction {
     config: TransactionConfig;
     audit?: Audit;
   }
-  

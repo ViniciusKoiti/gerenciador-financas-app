@@ -20,10 +20,11 @@ import { TransactionService } from '@app/shared/services/transaction.service';
 @Component({
   selector: 'app-transaction-board',
   imports: [
-    CommonModule, 
+    CommonModule,
     DragDropModule,
     MatDialogModule,
     AddButtonComponent,
+    TransactionTotalizatorComponent,
   ],
   standalone: true,
   templateUrl: './transaction-board.component.html',
@@ -32,8 +33,8 @@ import { TransactionService } from '@app/shared/services/transaction.service';
 export class TransactionBoardComponent implements OnInit {
   isLoading: boolean = true;
   categories: Category[] = [];
-  actualUser?: IUser | undefined; 
-  
+  actualUser?: IUser | undefined;
+
   connectedDropLists: string[] = [];
 
   constructor(private categoriaService: CategoriaService,
@@ -51,7 +52,7 @@ export class TransactionBoardComponent implements OnInit {
 
     this.categoriaService.findByUsuarioId(this.actualUser!.id).subscribe((response: any) => {
       this.categories = response;
-      this.connectedDropLists = this.categories.map(category => category.name); // Popula os IDs conectados
+      this.connectedDropLists = this.categories.map(category => category.name);
       this.isLoading = false;
     });
   }
@@ -85,22 +86,16 @@ export class TransactionBoardComponent implements OnInit {
     }).format(amount);
   }
 
-  openTransationForm(): void {
+  openTransationForm(category: Category, transaction: Transaction | null = null): void {
     let dialogRef = this.dialog.open(FormTransactionComponent, {
       height: '400px',
       width: '600px',
+      data: {category, transaction}
     });
 
     dialogRef.afterClosed().subscribe((result: Transaction | undefined) => {
       if (result) {
-        this.transactionService.saveTransaction(result).subscribe({
-          next: (response) => {
-            console.log("Teste");
-          },
-          error: (err) => {
-            console.error("Error ao criar transação")
-          }
-      })
+
     }
     });
 
