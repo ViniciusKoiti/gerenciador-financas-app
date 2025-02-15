@@ -24,7 +24,7 @@ interface Totals {
   templateUrl: './transaction-totalizator.component.html',
   styleUrls: ['./transaction-totalizator.component.scss']
 })
-export class TransactionTotalizatorComponent implements OnChanges {
+export class TransactionTotalizatorComponent implements OnChanges, OnChanges {
   @Input() categories: Category[] = [];
   generalTotals: Totals = { expenses: 0, income: 0, balance: 0, count: 0 };
   categoryTotals: { [categoryName: string]: Totals } = {};

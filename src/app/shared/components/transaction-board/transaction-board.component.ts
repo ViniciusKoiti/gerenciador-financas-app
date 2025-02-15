@@ -5,7 +5,7 @@ import { Transaction } from '@app/models/transation';
 import { CommonModule } from '@angular/common';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { TransactionTotalizatorComponent } from '../transaction-totalizator/transaction-totalizator.component';
-import { delay, map, Observable, of } from 'rxjs';
+import {delay, map, Observable, of, throwError} from 'rxjs';
 import { Category } from '@app/models/category';
 import { HttpClient } from '@angular/common/http';
 import { CategoriaService } from '@app/shared/services/category.service';
@@ -15,6 +15,8 @@ import { AddButtonComponent } from '../add-button/add-button.component';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormTransactionComponent } from '../form-transaction/form-transaction.component';
 import { TransactionService } from '@app/shared/services/transaction.service';
+import {catchError} from 'rxjs/operators';
+import {ApiResponse} from '@models/api-response';
 
 
 @Component({
@@ -49,7 +51,10 @@ export class TransactionBoardComponent implements OnInit {
 
   loadCategories() {
     this.actualUser = this.authService.getCurrentUser();
+    this.findCategories();
+  }
 
+  findCategories(){
     this.categoriaService.findByUsuarioId(this.actualUser!.id).subscribe((response: any) => {
       this.categories = response;
       this.connectedDropLists = this.categories.map(category => category.name);
@@ -57,7 +62,7 @@ export class TransactionBoardComponent implements OnInit {
     });
   }
 
-  onDrop(event: CdkDragDrop<any[]>) {
+  onDrop(event: CdkDragDrop<Transaction[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
@@ -68,15 +73,25 @@ export class TransactionBoardComponent implements OnInit {
         event.currentIndex
       );
 
-      const transaction = event.item.data;
-      const targetCategory = event.container.id;
+      const movedTransaction = event.previousContainer.data[event.previousIndex];
 
-      this.updateTransactionCategory(transaction.id, targetCategory);
+      const targetCategoryId = this.categories[event.currentIndex].id;
+
+      console.log(targetCategoryId);
+
+      this.categories = [...this.categories];
+
+      this.updateTransactionCategory(movedTransaction.id, targetCategoryId).subscribe({
+        next: (response) => {
+        },
+        error: (error) => {
+        }
+      });
     }
   }
 
-  updateTransactionCategory(transactionId: number, newCategoryName: string) {
-    // this.http.put(`sua-api-endpoint/${transactionId}`, { newCategoryName }).subscribe();
+  updateTransactionCategory(transactionId: number | undefined, newCategoryId: number): Observable<ApiResponse<void>> {
+    return this.transactionService.updateTransactionCategory(transactionId, newCategoryId)
   }
 
   formatCurrency(amount: number): string {
@@ -95,7 +110,7 @@ export class TransactionBoardComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: Transaction | undefined) => {
       if (result) {
-
+        this.findCategories()
     }
     });
 
