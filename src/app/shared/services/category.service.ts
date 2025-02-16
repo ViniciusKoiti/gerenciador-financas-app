@@ -10,23 +10,22 @@ import { Injectable } from "@angular/core";
 })
 export class CategoriaService {
     private readonly baseUrl = `${environment.apiUrl}/api/categorias`;
-  
+
     constructor(private http: HttpClientService) {}
-    
-    saveCategoria(categoria: any): Observable<ApiResponse<Category>> {
-      return this.http.post<ApiResponse<Category>>("categorias", categoria);
+
+    saveCategoria(categoria: Category): Observable<ApiResponse<Category>> {
+      return this.http.post<ApiResponse<Category>>("/categorias", categoria);
     }
-  
+
     findAll(): Observable<ApiResponse<Category[]>> {
       return this.http.get<ApiResponse<Category[]>>(`${this.baseUrl}/all`);
     }
-  
+
     findById(id: string): Observable<ApiResponse<Category>> {
       return this.http.get<ApiResponse<Category>>(`${this.baseUrl}/${id}`);
     }
-  
+
     findByUsuarioId(userId: number): Observable<ApiResponse<Category[]>> {
       return this.http.get<ApiResponse<Category[]>>(`/categorias/usuarios/${userId}/categorias`);
     }
   }
-  

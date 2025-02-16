@@ -8,6 +8,8 @@ import {FormFieldComponent} from '@shared/components/form-field/form-field.compo
 import {FormSelectComponent} from '@shared/components/form-select/form-select.component';
 import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {MatIcon} from '@angular/material/icon';
+import {CategoriaService} from '@shared/services/category.service';
+import {Category} from '@models/category';
 
 @Component({
   selector: 'app-category-form',
@@ -40,6 +42,7 @@ export class CategoryFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private categoryService: CategoriaService,
     private dialogRef: MatDialogRef<CategoryFormComponent>
   ) {
     this.categoryForm = this.fb.group({
@@ -55,8 +58,19 @@ export class CategoryFormComponent implements OnInit {
 
   save(): void {
     if (this.categoryForm.valid) {
-      const formValue = this.categoryForm.value;
-      this.dialogRef.close(formValue);
+      const formValue: Category = this.categoryForm.value ;
+      console.log(formValue);
+      this.categoryService.saveCategoria(formValue).subscribe({
+        next: (response) => {
+          this.dialogRef.close(response);
+        },
+        error: (error) => {
+          console.log(error);
+        }
+
+      })
+
+
     } else {
       this.categoryForm.markAllAsTouched();
     }
