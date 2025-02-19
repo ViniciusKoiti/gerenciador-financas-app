@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { environment } from '@app/enviroments/enviroments';
@@ -24,8 +24,8 @@ export class HttpClientService {
           }
           return response.data as T;
         }),
-        catchError(error => {
-          throw error?.error?.message || 'Erro na requisição';
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error(error?.error?.message || 'Erro na requisição'));
         })
       );
   }
@@ -40,8 +40,8 @@ export class HttpClientService {
           }
           return response.data as T;
         }),
-        catchError(error => {
-          throw error?.error?.message || 'Erro na requisição';
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error(error?.error?.message || 'Erro na requisição'));
         })
       );
   }
@@ -56,8 +56,8 @@ export class HttpClientService {
           }
           return response.data as T;
         }),
-        catchError(error => {
-          throw error?.error?.message || 'Erro na requisição';
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error(error?.error?.message || 'Erro na requisição'));
         })
       );
   }
@@ -72,8 +72,8 @@ export class HttpClientService {
           }
           return response.data as T;
         }),
-        catchError(error => {
-          throw error?.error?.message || 'Erro na requisição';
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error(error?.error?.message || 'Erro na requisição'));
         })
       );
   }

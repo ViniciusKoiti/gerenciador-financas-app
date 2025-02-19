@@ -140,8 +140,6 @@ export class LoginComponent implements OnInit {
   }
 
   get emailSignupControl(): FormControl {
-
-    console.log(this.signupForm.get('email')?.value)
     return this.signupForm.get('email') as FormControl;
   }
 

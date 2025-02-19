@@ -24,7 +24,7 @@ html {
     padding: 0;
     box-sizing: border-box;
   }
-  
+
 body {
     margin: 0;
     background: #f6f5f7;
@@ -43,7 +43,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 li {
-  list-style: none;  
+  list-style: none;
   padding: 0;
 
   margin: 0;
@@ -52,3 +52,16 @@ li {
 .d-flex{
   display: flex;
 }
+
+.mat-mdc-snack-bar-container {
+  &.error-snackbar {
+    --mdc-snackbar-container-color: rgb(255, 235, 238);
+    --mdc-snackbar-supporting-text-color: rgb(183, 28, 28);
+    --mat-mdc-snack-bar-button-color: rgb(136, 14, 79);
+
+    .mat-mdc-button.mat-mdc-snack-bar-action:not(:disabled).mat-unthemed{
+      color:  rgb(183, 28, 28);
+    }
+  }
+}
+
