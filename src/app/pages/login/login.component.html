@@ -1,8 +1,6 @@
 <div class="container mx-auto px-4 flex items-center justify-center min-h-screen">
   <div class="max-w-4xl mx-auto mt-8 overflow-hidden shadow-2xl rounded-3xl">
     <div class="relative grid lg:grid-cols-2 min-h-[600px]">
-      <!-- Login Form -->
-
 
       <div class="p-8 w-full transition-transform duration-500 min-w-[300px]"
         [class.translate-x-full]="hideSignupForm"
@@ -10,7 +8,6 @@
         <div class="signin" [class.hidden]="hideSignupForm">
           <h1 class="text-2xl font-bold" [class.hidden]="hideSignupForm">Login</h1>
 
-          <!-- Social Auth - Escondido em mobile -->
           <div class="hidden md:flex justify-center gap-4 mb-6 social-auth">
             <button mat-icon-button class="social-btn">
               <mat-icon svgIcon="facebook"></mat-icon>
@@ -28,7 +25,7 @@
 
         <form [formGroup]="loginForm" (ngSubmit)="onLogin()" [class.hidden]="hideSignupForm">
           <app-form-field
-            class="w-full max-w-md mx-auto mb-4"
+            class="w-full max-w-md mx-auto"
             label="Email"
             type="email"
             formControlName="email"
@@ -42,7 +39,7 @@
           ></app-form-field>
 
           <app-form-field
-            class="w-full max-w-md mx-auto mb-4"
+            class="w-full max-w-md mx-auto"
             label="Senha"
             type="password"
             [control]="passwordControl"
@@ -104,7 +101,7 @@
           ></app-form-field>
 
           <app-form-field
-            class="w-full max-w-md mx-auto mb-4"
+            class="w-full max-w-md mx-auto"
             label="Email"
             type="email"
             formControlName="email"
@@ -118,7 +115,7 @@
           ></app-form-field>
 
           <app-form-field
-            class="w-full max-w-md mx-auto mb-4"
+            class="w-full max-w-md mx-auto"
             label="Senha"
             type="password"
             [control]="passwordSignupControl"

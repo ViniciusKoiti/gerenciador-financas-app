@@ -15,6 +15,9 @@ export const errorInterceptor: HttpInterceptorFn = (request : HttpRequest<unknow
         case 400:
           notificationService.error(err.message);
           break
+        case 401:
+          notificationService.error(err.error.message);
+          break;
         case 500:
           notificationService.error();
       }
