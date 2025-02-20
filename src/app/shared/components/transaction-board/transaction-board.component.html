@@ -1,12 +1,16 @@
 <app-transaction-totalizator [categories]="categories">
 </app-transaction-totalizator>
 
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <div class="flex items-center">
+        <mat-icon class="mr-2 text-gray-700">sync_alt</mat-icon>
+        <h2 class="text-2xl font-bold text-gray-900">Transações</h2>
+      </div>
+    </mat-expansion-panel-header>
 <div class="bg-gray-150 m-3 p-2">
   <div class="max-w-9xl">
-    <div class="mb-8 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-gray-900">Transações</h1>
-    </div>
-
     <div class="w-full p-4">
       <div
         cdkDropList
@@ -95,3 +99,5 @@
     </div>
   </div>
 </div>
+  </mat-expansion-panel>
+</mat-accordion>

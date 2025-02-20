@@ -31,6 +31,7 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {MatCardContent} from '@angular/material/card';
 import {MatButtonToggle, MatButtonToggleGroup} from '@angular/material/button-toggle';
 import {CategoryFormComponent} from '@shared/components/category-form/category-form.component';
+import {MatAccordion, MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
 
 
 @Component({
@@ -41,6 +42,10 @@ import {CategoryFormComponent} from '@shared/components/category-form/category-f
     MatDialogModule,
     AddButtonComponent,
     TransactionTotalizatorComponent,
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatIcon,
   ],
   standalone: true,
   templateUrl: './transaction-board.component.html',
