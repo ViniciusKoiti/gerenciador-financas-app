@@ -4,6 +4,7 @@ import { TransactionType } from '@app/models/transaction-type';
 import { Transaction } from '@app/models/transation';
 import {MatAccordion, MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
 import {TransactionService} from '@shared/services/transaction.service';
+import {MatIcon} from '@angular/material/icon';
 
 export interface Category {
   name: string;
@@ -20,7 +21,7 @@ interface Totals {
 @Component({
   selector: 'app-transaction-totalizator',
   standalone: true,
-  imports: [CommonModule, MatExpansionPanel, MatExpansionPanelHeader, MatAccordion],
+  imports: [CommonModule, MatExpansionPanel, MatExpansionPanelHeader, MatAccordion, MatIcon],
   templateUrl: './transaction-totalizator.component.html',
   styleUrls: ['./transaction-totalizator.component.scss']
 })

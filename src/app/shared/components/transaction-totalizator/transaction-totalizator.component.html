@@ -1,7 +1,10 @@
 <mat-accordion>
-  <mat-expansion-panel hideToggle>
+  <mat-expansion-panel>
     <mat-expansion-panel-header>
+      <div class="flex items-center">
+        <mat-icon class="mr-2 text-gray-700">bar_chart</mat-icon>
         <h2 class="font-semibold text-gray-800">Relatórios das Categorias</h2>
+      </div>
     </mat-expansion-panel-header>
 <div class="grid grid-cols-1 gap-1 mb-6">
   <div class="p-4 rounded-lg border-1 border-blue-100 border-solid shadow-sm">
@@ -31,7 +34,6 @@
   </div>
 </div>
 
-<!-- Totais por Categoria -->
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-1 mb-6">
   <div *ngFor="let category of categories" class="p-4 border-1 border-blue-100 border-solid rounded-lg shadow-sm">
     <div class="flex justify-between   items-center mb-2">

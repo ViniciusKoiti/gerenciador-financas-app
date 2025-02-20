@@ -59,9 +59,9 @@
           <app-custom-button
             text="Entrar"
             type="submit"
-            color="primary"
+            variant="primary"
             [isGradient]="true"
-            [customClasses]="'w-full'"
+            [customClasses]="'w-full border-0 hover:bg-white mt-3 transition-colors'"
             (buttonClick)="onLogin()"
           ></app-custom-button>
 
@@ -88,7 +88,7 @@
         <h1 class="text-2xl font-bold mb-6 text-center">Cadastre-se</h1>
         <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
           <app-form-field
-            class="w-full max-w-md mx-auto mb-4"
+            class="w-full max-w-md mx-auto"
             label="Nome"
             type="text"
             formControlName="nome"
@@ -132,12 +132,14 @@
 
               text="Cadastrar-se"
               type="submit"
-              color="primary"
+              variant="primary"
               [disabled]="isSaving"
               [isGradient]="true"
-              [customClasses]="'w-48 border-0'"
-
+              [customClasses]="'w-48 border-0 hover:bg-white mt-3 transition-colors'"
             ></app-custom-button>
+
+
+
           </div>
 
           @if (isMobile) {
@@ -150,7 +152,6 @@
         </form>
       </div>
 
-      <!-- Side Panel - Escondido em mobile -->
       @if (!isMobile) {
         <div class="lg:flex bg-gradient-to-r from-yellow-400 to-yellow-500 p-8 text-white flex-col justify-center items-center text-center">
           <h1 class="text-3xl font-bold mb-4 transition-opacity duration-300"

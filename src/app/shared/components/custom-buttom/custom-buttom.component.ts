@@ -64,7 +64,6 @@ export class CustomButtonComponent implements OnInit, OnChanges {
   private updateButtonClasses(): void {
     const baseClasses = 'relative flex items-center justify-center font-medium transition-all duration-300 rounded-3xl shadow-md hover:shadow-xl focus:outline-none';
 
-    // Tamanhos
     const sizeClasses = {
       'sm': 'h-8 px-4 text-sm',
       'md': 'h-12 px-6 text-base',

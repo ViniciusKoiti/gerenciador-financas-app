@@ -60,15 +60,17 @@
     <app-custom-button
     text="Cancelar"
     type="submit"
+    variant="danger"
     [isGradient]="true"
-    [customClasses]="'w-44'"
+    [customClasses]="'w-44 border-0'"
     (buttonClick)="cancel()"
   ></app-custom-button>
   <app-custom-button
   text="Salvar"
   type="submit"
+  variant="success"
   [isGradient]="true"
-  [customClasses]="'w-44'"
+  [customClasses]="'w-44 border-0'"
   (buttonClick)="save()"
 ></app-custom-button>
 </div>
