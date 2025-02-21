@@ -22,7 +22,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
         <div class="w-5 h-5 rounded-full animate-spin"></div>
       </div>
 
-      <span *ngIf="icon && !loading" class="mr-2">
+      <span *ngIf="icon && !loading" class="d-flex">
         <i class="material-icons text-lg">{{icon}}</i>
       </span>
 

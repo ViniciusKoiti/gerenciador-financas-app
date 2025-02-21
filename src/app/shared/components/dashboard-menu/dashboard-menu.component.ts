@@ -2,14 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { TransactionBoardComponent } from '../transaction-board/transaction-board.component';
+import {CustomButtonComponent} from '@shared/components/custom-buttom/custom-buttom.component';
 
 @Component({
  selector: 'app-dashboard-menu',
  standalone: true,
- imports: [CommonModule,
-  MatIconModule,
-  TransactionBoardComponent
- ],
+  imports: [CommonModule,
+    MatIconModule,
+    TransactionBoardComponent, CustomButtonComponent
+  ],
  templateUrl: "./dashboard-menu.component.html"
 })
 export class DashboardMenuComponent {
