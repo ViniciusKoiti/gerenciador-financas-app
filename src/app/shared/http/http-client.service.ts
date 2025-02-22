@@ -77,4 +77,21 @@ export class HttpClientService {
         })
       );
   }
+
+  patch<T>(endpoint: string, body: any): Observable<T> {
+    return this.http
+      .patch<ApiResponse<T>>(`${environment.apiUrl}${endpoint}`, body)
+      .pipe(
+        map(response => {
+          if (response.statusCode >= 400) {
+            throw new Error(response.message ?? "Erro no patch");
+          }
+          return response.data as T;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => new Error(error?.error?.message || 'Erro na requisição'));
+        })
+      );
+  }
+
 }

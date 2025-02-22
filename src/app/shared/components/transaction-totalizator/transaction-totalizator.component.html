@@ -43,20 +43,22 @@
       <div class="flex justify-between items-center">
         <span class="text-gray-600">Despesas</span>
         <span class="text-red-600 font-medium">
-          {{ formatCurrency(categoryTotals[category.name].expenses) }}
+       {{ formatCurrency(categoryTotals[category.name]?.expenses ?? 0) }}
+
 
         </span>
       </div>
       <div class="flex justify-between items-center">
         <span class="text-gray-600">Receitas</span>
         <span class="text-green-600 font-medium">
-          {{ formatCurrency(categoryTotals[category.name].income) }}
+         {{ formatCurrency(categoryTotals[category.name]?.income ?? 0) }}
+
         </span>
       </div>
       <div class="flex justify-between items-center pt-2 border-t">
         <span class="font-medium text-gray-600">Saldo</span>
-        <span [class]="getBalanceClass(categoryTotals[category.name].balance)" class="font-semibold">
-          {{ formatCurrency(categoryTotals[category.name].balance) }}
+        <span [class]="getBalanceClass(categoryTotals[category.name]?.balance)" class="font-semibold">
+          {{ formatCurrency(categoryTotals[category.name]?.expenses ?? 0) }}
         </span>
       </div>
     </div>

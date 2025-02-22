@@ -40,8 +40,11 @@ export class TransactionTotalizatorComponent implements OnChanges, OnChanges {
   private calculateTotals(): void {
     this.categoryTotals = {};
     this.generalTotals = { expenses: 0, income: 0, balance: 0, count: 0 };
-
+    if(!this.categories) return;
     this.categories.forEach(category => {
+      if(!category) return;
+      if(!category.transactions) return;
+
       const totals: Totals = { expenses: 0, income: 0, balance: 0, count: 0 };
 
       category.transactions.forEach(transaction => {

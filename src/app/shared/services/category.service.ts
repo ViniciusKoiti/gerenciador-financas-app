@@ -25,7 +25,7 @@ export class CategoriaService {
       return this.http.get<ApiResponse<Category>>(`${this.baseUrl}/${id}`);
     }
 
-    findByUsuarioId(userId: number): Observable<ApiResponse<Category[]>> {
-      return this.http.get<ApiResponse<Category[]>>(`/categorias/usuarios/${userId}/categorias`);
+    findByUsuarioId(userId: number): Observable<Category[]> {
+      return this.http.get<Category[]>(`/categorias/usuarios/${userId}/categorias`);
     }
   }

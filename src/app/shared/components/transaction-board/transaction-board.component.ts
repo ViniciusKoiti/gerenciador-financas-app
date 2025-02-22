@@ -12,7 +12,7 @@ import {
   transferArrayItem
 } from '@angular/cdk/drag-drop';
 import { TransactionTotalizatorComponent } from '../transaction-totalizator/transaction-totalizator.component';
-import {delay, map, Observable, of, throwError} from 'rxjs';
+import {delay, forkJoin, lastValueFrom, map, Observable, of, throwError} from 'rxjs';
 import { Category } from '@app/models/category';
 import { HttpClient } from '@angular/common/http';
 import { CategoriaService } from '@app/shared/services/category.service';
@@ -63,7 +63,8 @@ export class TransactionBoardComponent implements OnInit {
   constructor(private categoriaService: CategoriaService,
     private transactionService: TransactionService,
     private authService: AuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+
   ) {}
 
   ngOnInit(): void {
@@ -75,12 +76,36 @@ export class TransactionBoardComponent implements OnInit {
     this.findCategories();
   }
 
-  findCategories(){
-    this.categoriaService.findByUsuarioId(this.actualUser!.id).subscribe((response: any) => {
+  async findCategories() {
+    this.isLoading = true;
+
+    try {
+      const response = await lastValueFrom(this.categoriaService.findByUsuarioId(this.actualUser!.id));
+
       this.categories = response;
+      if (!response) return;
+
+      const transacaoRequests = this.categories.map(category =>
+        this.transactionService.findByCategoryId(category.id)
+      );
+
+      if (transacaoRequests.length === 0) {
+        this.isLoading = false;
+        return;
+      }
+
+      const transacoesPorCategoria = await lastValueFrom(forkJoin(transacaoRequests));
+
+      this.categories.forEach((category, index) => {
+        category.transactions = transacoesPorCategoria[index] as Transaction[] || [];
+      });
+
       this.connectedDropLists = this.categories.map(category => category.name);
-      this.isLoading = false;
-    });
+    } catch (error) {
+      console.error("Erro ao buscar categorias ou transações:", error);
+    } finally {
+      this.isLoading = false; // Garantir que o loading seja desativado mesmo em caso de erro
+    }
   }
 
   onDragCategoryStarted(event: CdkDragStart) {
@@ -93,6 +118,9 @@ export class TransactionBoardComponent implements OnInit {
 
 
   dropCategory(event: CdkDragDrop<Category[]>) {
+
+
+
     moveItemInArray(this.categories, event.previousIndex, event.currentIndex);
     this.categories = [...this.categories];
   }
@@ -108,29 +136,37 @@ export class TransactionBoardComponent implements OnInit {
         event.currentIndex
       );
 
-      const movedTransaction = event.previousContainer.data[event.previousIndex];
+      const movedTransaction: Transaction = event.container.data[event.currentIndex];
 
-      const targetCategoryId = this.categories[event.currentIndex].id;
+      const targetCategoryId = this.categories.find((categoria) => event.container.id === categoria.name)?.id
 
-      console.log(targetCategoryId);
+      if(!movedTransaction.id) return;
+      if(!targetCategoryId) return;
+
 
       this.categories = [...this.categories];
 
       this.updateTransactionCategory(movedTransaction.id, targetCategoryId).subscribe({
         next: (response) => {
-        },
+          console.log(response);
+          },
         error: (error) => {
+
+          console.log(error);
         }
       });
     }
   }
 
-  updateTransactionCategory(transactionId: number | undefined, newCategoryId: number): Observable<ApiResponse<void>> {
-    return this.transactionService.updateTransactionCategory(transactionId, newCategoryId)
+  updateTransactionCategory(transactionId: number, newCategoryId: number): Observable<ApiResponse<void>> {
+    return this.transactionService.updateTransactionCategory(transactionId,
+
+      newCategoryId
+    )
   }
 
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'USD'
     }).format(amount);

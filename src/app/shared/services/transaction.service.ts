@@ -26,12 +26,11 @@ export class TransactionService {
       return this.http.get<ApiResponse<Transaction>>(`/transacoes/${id}`);
     }
 
-  updateTransactionCategory(transactionId: number | undefined, categoryId: number): Observable<any> {
-    return this.http.put(`/api/transactions/${transactionId}`, {
-      categoryId
-    }).pipe(
-      retry(1),
-      delay(300)
-    );
+    findByCategoryId(id: number): Observable<Transaction[]> {
+      return this.http.get<Transaction[]>(`/transacoes/${id}`);
+    }
+
+  updateTransactionCategory(transactionId: number, categoryId: number ): Observable<any> {
+    return this.http.patch(`/transacoes/${transactionId}`, { id:categoryId });
   }
-  }
+}
