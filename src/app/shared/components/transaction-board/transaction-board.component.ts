@@ -33,6 +33,7 @@ import {MatButtonToggle, MatButtonToggleGroup} from '@angular/material/button-to
 import {CategoryFormComponent} from '@shared/components/category-form/category-form.component';
 import {MatAccordion, MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
 import {TransactionItemComponent} from '@shared/components/transaction-item/transaction-item.component';
+import {CategoryCardComponent} from '@shared/components/category-card/category-card.component';
 
 
 @Component({
@@ -48,6 +49,7 @@ import {TransactionItemComponent} from '@shared/components/transaction-item/tran
     MatExpansionPanelHeader,
     MatIcon,
     TransactionItemComponent,
+    CategoryCardComponent,
   ],
   standalone: true,
   templateUrl: './transaction-board.component.html',
