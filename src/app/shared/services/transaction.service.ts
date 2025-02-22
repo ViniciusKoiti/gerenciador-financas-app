@@ -27,7 +27,7 @@ export class TransactionService {
     }
 
     findByCategoryId(id: number): Observable<Transaction[]> {
-      return this.http.get<Transaction[]>(`/transacoes/${id}`);
+      return this.http.get<Transaction[]>(`/transacoes/categorias/${id}`);
     }
 
   updateTransactionCategory(transactionId: number, categoryId: number ): Observable<any> {

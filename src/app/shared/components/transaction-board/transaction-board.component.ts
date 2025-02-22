@@ -12,7 +12,7 @@ import {
   transferArrayItem
 } from '@angular/cdk/drag-drop';
 import { TransactionTotalizatorComponent } from '../transaction-totalizator/transaction-totalizator.component';
-import {delay, forkJoin, lastValueFrom, map, Observable, of, throwError} from 'rxjs';
+import {delay, forkJoin, lastValueFrom, map, Observable, of, switchMap, throwError} from 'rxjs';
 import { Category } from '@app/models/category';
 import { HttpClient } from '@angular/common/http';
 import { CategoriaService } from '@app/shared/services/category.service';
@@ -81,30 +81,24 @@ export class TransactionBoardComponent implements OnInit {
 
     try {
       const response = await lastValueFrom(this.categoriaService.findByUsuarioId(this.actualUser!.id));
-
       this.categories = response;
       if (!response) return;
-
       const transacaoRequests = this.categories.map(category =>
         this.transactionService.findByCategoryId(category.id)
       );
-
       if (transacaoRequests.length === 0) {
         this.isLoading = false;
         return;
       }
-
       const transacoesPorCategoria = await lastValueFrom(forkJoin(transacaoRequests));
-
       this.categories.forEach((category, index) => {
         category.transactions = transacoesPorCategoria[index] as Transaction[] || [];
       });
-
       this.connectedDropLists = this.categories.map(category => category.name);
     } catch (error) {
       console.error("Erro ao buscar categorias ou transações:", error);
     } finally {
-      this.isLoading = false; // Garantir que o loading seja desativado mesmo em caso de erro
+      this.isLoading = false;
     }
   }
 
@@ -196,10 +190,22 @@ export class TransactionBoardComponent implements OnInit {
       data: {category, transaction}
     });
 
-    dialogRef.afterClosed().subscribe((result: Transaction | undefined) => {
-      if (result) {
-        this.findCategories()
-    }
+    dialogRef.afterClosed().pipe(
+      switchMap((result: Transaction | undefined) => {
+
+        if (result) {
+          return this.transactionService.findByCategoryId(category.id);
+        }
+        return of(null);
+      })
+    ).subscribe(transactions => {
+      if (transactions) {
+        const categoryIndex = this.categories.findIndex(cat => cat.id === category.id);
+        if (categoryIndex !== -1) {
+          this.categories[categoryIndex].transactions = transactions;
+          this.categories = [...this.categories];
+        }
+      }
     });
 
   }
@@ -212,7 +218,6 @@ export class TransactionBoardComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: Transaction | undefined) => {
       if (result) {
-        this.findCategories()
       }
     });
 
