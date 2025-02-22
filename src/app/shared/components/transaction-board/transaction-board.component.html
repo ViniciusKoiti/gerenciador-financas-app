@@ -16,7 +16,11 @@
         cdkDropList
         [cdkDropListData]="categories"
         (cdkDropListDropped)="dropCategory($event)"
-        class="grid grid-flow-col auto-cols-[320px] custom-scrollbar overflow-x-auto gap-4 pb-4"
+        class="grid grid-flow-col
+         sm:auto-cols-[280px]
+         md:auto-cols-[320px]
+         lg:auto-cols-[360px]
+         xl:auto-cols-[400px]  custom-scrollbar overflow-x-auto gap-4 pb-4"
       >
         <div
           *ngFor="let category of categories"
@@ -55,26 +59,10 @@
             (cdkDropListDropped)="onDrop($event)"
             class="flex flex-col space-y-3 p-4 rounded-lg bg-gray-300 min-h-[200px]"
           >
-            <div
+            <app-transaction-item
               *ngFor="let transaction of category.transactions"
-              cdkDrag
-              class="bg-gray-100 rounded-lg shadow-sm p-4 cursor-move hover:shadow-md transition-shadow"
-            >
-              <div class="flex items-center justify-between">
-                <h3 class="font-medium text-gray-900">
-                  {{ transaction.description }}
-                </h3>
-                <span
-                  [ngClass]="transaction.type === 'RECEITA' ? 'text-green-600' : 'text-red-600'"
-                  class="font-semibold"
-                >
-                  {{ transaction.type === 'RECEITA' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
-                </span>
-              </div>
-              <div class="text-sm text-gray-500">
-                <span>Vencimento: {{ transaction.config.dueDate | date:'dd/MM/yyyy' }}</span>
-              </div>
-            </div>
+              [transaction]="transaction"
+            ></app-transaction-item>
 
             <div
               *ngIf="category?.transactions?.length === 0"

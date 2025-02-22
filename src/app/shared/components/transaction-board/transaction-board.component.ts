@@ -32,6 +32,7 @@ import {MatCardContent} from '@angular/material/card';
 import {MatButtonToggle, MatButtonToggleGroup} from '@angular/material/button-toggle';
 import {CategoryFormComponent} from '@shared/components/category-form/category-form.component';
 import {MatAccordion, MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
+import {TransactionItemComponent} from '@shared/components/transaction-item/transaction-item.component';
 
 
 @Component({
@@ -46,6 +47,7 @@ import {MatAccordion, MatExpansionPanel, MatExpansionPanelHeader} from '@angular
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatIcon,
+    TransactionItemComponent,
   ],
   standalone: true,
   templateUrl: './transaction-board.component.html',
@@ -173,15 +175,6 @@ export class TransactionBoardComponent implements OnInit {
     }));
   }
 
-
-  sortTransactions(category: any, criteria: 'date' | 'amount') {
-    category.transactions.sort((a: any, b: any) => {
-      if (criteria === 'date') {
-        return new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime();
-      }
-      return b.amount - a.amount;
-    });
-  }
 
   openTransationForm(category: Category, transaction: Transaction | null = null): void {
     let dialogRef = this.dialog.open(FormTransactionComponent, {

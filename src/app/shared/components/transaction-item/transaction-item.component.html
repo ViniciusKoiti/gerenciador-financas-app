@@ -1,0 +1,19 @@
+<div
+  cdkDrag
+  class="bg-gray-100 rounded-lg shadow-sm p-4 cursor-move hover:shadow-md transition-shadow"
+>
+  <div class="flex items-center justify-between">
+    <h3 class="font-medium text-gray-900">
+      {{ transaction.description }}
+    </h3>
+    <span
+      [ngClass]="transaction.type === 'RECEITA' ? 'text-green-600' : 'text-red-600'"
+      class="font-semibold"
+    >
+      {{ transaction.type === 'RECEITA' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
+    </span>
+  </div>
+  <div class="text-sm text-gray-500">
+    <span>Vencimento: {{ transaction.config.dueDate | date:'dd/MM/yyyy' }}</span>
+  </div>
+</div>
