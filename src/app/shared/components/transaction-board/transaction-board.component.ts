@@ -34,6 +34,7 @@ import {CategoryFormComponent} from '@shared/components/category-form/category-f
 import {MatAccordion, MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
 import {TransactionItemComponent} from '@shared/components/transaction-item/transaction-item.component';
 import {CategoryCardComponent} from '@shared/components/category-card/category-card.component';
+import {ReportGraphComponent} from '@shared/components/report-graph/report-graph.component';
 
 
 @Component({
@@ -50,6 +51,7 @@ import {CategoryCardComponent} from '@shared/components/category-card/category-c
     MatIcon,
     TransactionItemComponent,
     CategoryCardComponent,
+    ReportGraphComponent,
   ],
   standalone: true,
   templateUrl: './transaction-board.component.html',
