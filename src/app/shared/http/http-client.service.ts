@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
@@ -14,9 +14,18 @@ export class HttpClientService {
     private http: HttpClient,
   ) {}
 
-  get<T>(endpoint: string): Observable<T> {
+
+
+  get<T>(url: string, options?: {
+    headers?: HttpHeaders | { [header: string]: string | string[] };
+    observe?: 'body';
+    params?: HttpParams | { [param: string]: string | string[] };
+    reportProgress?: boolean;
+    responseType?: 'json';
+    withCredentials?: boolean;
+  }): Observable<T> {
     return this.http
-      .get<ApiResponse<T>>(`${environment.apiUrl}${endpoint}`)
+      .get<ApiResponse<T>>(`${environment.apiUrl}${url}`, options)
       .pipe(
         map(response => {
           if (response.statusCode >= 400) {

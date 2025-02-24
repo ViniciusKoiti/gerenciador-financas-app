@@ -63,7 +63,6 @@ export class TransactionBoardComponent implements OnInit {
   categories: Category[] = [];
   actualUser?: IUser | undefined;
   isDragging = false;
-
   connectedDropLists: string[] = [];
 
   constructor(private categoriaService: CategoriaService,
@@ -78,7 +77,6 @@ export class TransactionBoardComponent implements OnInit {
   }
 
   loadCategories() {
-    this.actualUser = this.authService.getCurrentUser();
     this.findCategories();
   }
 
@@ -86,6 +84,8 @@ export class TransactionBoardComponent implements OnInit {
     this.isLoading = true;
 
     try {
+      if(!this.actualUser) return;
+
       const response = await lastValueFrom(this.categoriaService.findByUsuarioId(this.actualUser!.id));
       this.categories = response;
       if (!response) return;

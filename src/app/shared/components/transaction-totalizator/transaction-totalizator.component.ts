@@ -30,9 +30,6 @@ export class TransactionTotalizatorComponent implements OnChanges, OnChanges {
   generalTotals: Totals = { expenses: 0, income: 0, balance: 0, count: 0 };
   categoryTotals: { [categoryName: string]: Totals } = {};
 
-
-
-
   ngOnChanges(): void {
     this.calculateTotals();
   }

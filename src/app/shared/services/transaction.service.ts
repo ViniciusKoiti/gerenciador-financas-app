@@ -30,7 +30,9 @@ export class TransactionService {
       return this.http.get<Transaction[]>(`/transacoes/categorias/${id}`);
     }
 
-  updateTransactionCategory(transactionId: number, categoryId: number ): Observable<any> {
-    return this.http.patch(`/transacoes/${transactionId}`, { id:categoryId });
-  }
+    updateTransactionCategory(transactionId: number, categoryId: number ): Observable<ApiResponse<void>> {
+      return this.http.patch(`/transacoes/${transactionId}`, { id:categoryId });
+    }
+
+
 }
