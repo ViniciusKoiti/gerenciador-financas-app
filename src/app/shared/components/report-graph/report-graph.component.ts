@@ -52,13 +52,22 @@ export class ReportGraphComponent implements OnInit  {
 
   findGraphData(): void {
     const today = new Date();
-    const lastWeek = new Date();
-    lastWeek.setDate(today.getDate() - 7);
+    today.setFullYear(today.getFullYear() - 1);
+    const lastMonth = new Date();
+    lastMonth.setFullYear(lastMonth.getFullYear() - 1);
+    lastMonth.setDate(today.getDate() - 30);
 
-    this.lineGraphService.findLineGraphs(today, lastWeek).subscribe(response => {
-      console.log("Dados do gráfico:", response);
+    this.lineGraphService.findLineGraphs(lastMonth, today).subscribe(response => {
+      const {labels, dataset}: { labels: string[], dataset: number[] } =
+        response.reduce<{ labels: string[], dataset: number[] }>((acc, item) => {
+          acc.labels.push(item.name);
+          acc.dataset.push(item.value);
+          return acc;
+        }, {labels: [], dataset: []});
+
+      this.barChartLabels = labels;
+      this.barChartData = [{data: dataset, label: 'Vendas Atualizadas'}];
     });
   }
-
 
 }

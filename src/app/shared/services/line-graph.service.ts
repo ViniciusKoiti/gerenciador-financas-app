@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {ApiResponse} from '@models/api-response';
 import {HttpClientService} from '@shared/http/http-client.service';
 import {HttpParams} from '@angular/common/http';
+import {LineGraphResponse} from '@responses/line-graph.response';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class LineGraphService {
 
   constructor(private http: HttpClientService) {}
 
-  findLineGraphs(dateInicio: Date, dataFim: Date): Observable<ApiResponse<LineGraphService>> {
+  findLineGraphs(dateInicio: Date, dataFim: Date): Observable<LineGraphResponse[]> {
 
 
     const params = new HttpParams()
@@ -22,7 +23,7 @@ export class LineGraphService {
       .set('dataFim', dataFim.toISOString());
     const options: { params: HttpParams } = { params };
 
-    return this.http.get<ApiResponse<LineGraphService>>(
+    return this.http.get<LineGraphResponse[]>(
       `${this.baseUrl}/total/categoria`,
       options
     );

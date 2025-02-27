@@ -73,6 +73,7 @@ export class TransactionBoardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.actualUser = this.authService.getCurrentUser();
     this.loadCategories();
   }
 
@@ -85,7 +86,6 @@ export class TransactionBoardComponent implements OnInit {
 
     try {
       if(!this.actualUser) return;
-
       const response = await lastValueFrom(this.categoriaService.findByUsuarioId(this.actualUser!.id));
       this.categories = response;
       if (!response) return;
