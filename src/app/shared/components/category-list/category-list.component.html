@@ -1,0 +1,29 @@
+<div class="bg-gray-150 m-3 p-2">
+  <div class="max-w-9xl">
+    <div class="w-full p-4">
+      <div
+        cdkDropList
+        [cdkDropListData]="categories"
+        (cdkDropListDropped)="onDrop($event)"
+        class="grid grid-flow-col auto-cols-[320px] custom-scrollbar overflow-x-auto gap-4 pb-4"
+      >
+        <app-category-card
+          *ngFor="let category of categories"
+          [category]="category"
+          [connectedDropLists]="connectedDropLists"
+          [isDragging]="isDragging"
+          (dragStart)="onDragCategoryStarted($event)"
+          (dragEnd)="onDragCategoryEnded($event)"
+          (openTransactionForm)="openTransactionForm.emit($event)"
+        ></app-category-card>
+
+        <div class="bg-white shadow rounded-lg p-5 flex items-center justify-between h-[fit-content]">
+          <div class="text-center w-11/12 d-flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-gray-700">Adicionar Categoria</h2>
+            <app-add-button (click)="openCategoryForm.emit()"></app-add-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

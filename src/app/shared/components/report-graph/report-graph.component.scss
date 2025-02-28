@@ -1,3 +1,79 @@
+.filter-section {
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.filter-title {
+  margin-top: 0;
+  color: #374151;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.date-range-select {
+  min-width: 200px;
+  max-width: 300px;
+}
+
+.custom-date-range {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Estilos para o loading e mensagens de erro */
+.loading-indicator,
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  gap: 1rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.loading-indicator mat-spinner {
+  margin-bottom: 1rem;
+}
+
+.no-data-message mat-icon {
+  font-size: 2rem;
+  height: 2rem;
+  width: 2rem;
+  color: #9ca3af;
+}
+
 .mat-expansion-panel {
   margin: 1rem;
 }
@@ -16,6 +92,12 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   transition: all 0.3s ease;
+  margin-bottom: 2rem;
+  
+  h3 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
 }
 
 .chart-section:hover {
@@ -24,10 +106,42 @@
 
 .chart-wrapper {
   position: relative;
-  height: 400px; /* Altura ajustada para os gráficos */
   width: 100%;
-  max-width: 1200px; /* Largura máxima */
-  margin: 0 auto; /* Centraliza o gráfico */
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  padding: 10px;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 100%;
+  }
+  
+  /* Fix for container div within chart-wrapper */
+  div.h-full {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    
+    &.position-relative {
+      display: block;
+      overflow: hidden;
+    }
+    
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+  }
 }
 
 /* Estilo responsivo */
@@ -38,7 +152,7 @@
 
   .chart-section {
     flex: 1;
-    width: 50%;
+    width: 100%;
   }
 }
 
@@ -47,4 +161,66 @@
   .chart-wrapper {
     height: 250px; /* Altura menor para telas pequenas */
   }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chart-wrapper {
+    height: 350px !important;
+    min-height: 300px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-wrapper {
+    height: 300px !important;
+    min-height: 250px !important;
+  }
+}
+
+/* Enforced styles to override Chart.js defaults */
+:host ::ng-deep canvas {
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+:host ::ng-deep .chart-js-render-monitor {
+  animation: chartjs-render-animation 0.001s;
+}
+
+@keyframes chartjs-render-animation {
+  0% {
+    opacity: 0.99;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Chart positioning fixes */
+:host ::ng-deep .chartjs-size-monitor, 
+:host ::ng-deep .chartjs-size-monitor-expand, 
+:host ::ng-deep .chartjs-size-monitor-shrink {
+  position: absolute;
+  direction: ltr;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden;
+  z-index: -1;
+}
+
+/* Fix for chart containers */
+.position-relative {
+  position: relative !important;
+  display: block !important;
+}
+
+/* Fix chart display on iOS and Safari */
+canvas.baseChart {
+  width: 100% !important;
+  height: 100% !important;
 }
