@@ -4,6 +4,7 @@ import {MatIcon} from '@angular/material/icon';
 import {BaseChartDirective} from 'ng2-charts';
 import {LineGraphService} from '@shared/services/line-graph.service';
 import {ChartConfiguration, ChartData} from 'chart.js';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-report-graph',
@@ -20,7 +21,27 @@ import {ChartConfiguration, ChartData} from 'chart.js';
 })
 export class ReportGraphComponent implements OnInit  {
   @ViewChild('barChart') barChart?: BaseChartDirective;
+  @ViewChild('lineChart') lineChart?: BaseChartDirective;
   private readonly lineGraphService = inject(LineGraphService);
+  private readonly formBuilder = inject(FormBuilder);
+  filterForm: FormGroup;
+
+  constructor() {
+    this.filterForm = this.formBuilder.group({
+      dateRange: ['30'],  // Padrão: últimos 30 dias
+      startDate: [null],
+      endDate: [null]
+    });
+  }
+
+  dateRangeOptions = [
+    { value: '30', label: 'Últimos 30 dias' },
+    { value: '90', label: 'Últimos 3 meses' },
+    { value: '180', label: 'Últimos 6 meses' },
+    { value: '365', label: 'Último ano' },
+    { value: 'custom', label: 'Período personalizado' }
+  ];
+
   private colorPalette = [
     'rgba(71, 123, 189, 0.7)',     // Azul
     'rgba(95, 173, 86, 0.7)',      // Verde
@@ -203,15 +224,7 @@ export class ReportGraphComponent implements OnInit  {
         }
       },
       x: {
-        title: {
-          display: true,
-          text: 'Mês',
-          font: {
-            family: "'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif",
-            size: 12,
-            weight: 'bold'
-          }
-        },
+
         ticks: {
           font: {
             family: "'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif",
@@ -249,7 +262,9 @@ export class ReportGraphComponent implements OnInit  {
 
   updateChart() {
     setTimeout(() => {
+
       this.barChart?.update();
+      this.lineChart?.update();
     }, 300);
   }
 
@@ -270,6 +285,7 @@ export class ReportGraphComponent implements OnInit  {
 
       this.barChartLabels = labels;
       this.chartLabels = labels;
+      this.barChartData.labels = labels;
       this.barChartData.datasets[0].data = dataset as any;
       this.lineChartData.labels = labels;
       this.lineChartData.datasets[0].data = dataset as any;

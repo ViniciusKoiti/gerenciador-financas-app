@@ -1,5 +1,5 @@
 <mat-accordion>
-  <mat-expansion-panel (opened)="updateChart()">
+  <mat-expansion-panel>
     <mat-expansion-panel-header>
       <div class="flex items-center">
         <mat-icon class="mr-2 text-gray-700">sync_alt</mat-icon>
@@ -7,28 +7,29 @@
       </div>
     </mat-expansion-panel-header>
 
-    <div class="bg-gray-150 m-3 p-2">
-      <!-- Abas para alternar entre gráficos -->
-      <div class="flex border-b border-gray-200 mb-4">
-        <button class="py-2 px-4 mr-2 focus:outline-none border-b-2 border-blue-500 font-medium">
-          Gráfico de Barras
-        </button>
-        <button class="py-2 px-4 focus:outline-none hover:text-blue-500 font-medium">
-          Gráfico de Linha
-        </button>
+    <div class="chart-container">
+      <div class="chart-section">
+        <div class="chart-wrapper">
+          <canvas
+            baseChart
+            #barChart
+            [type]="'bar'"
+            [data]="barChartData"
+            [options]="barChartOptions">
+          </canvas>
+        </div>
       </div>
 
-      <div>
-        <canvas #barChart baseChart
-                [type]="'bar'"
-                [datasets]="barChartData.datasets"
-                [labels]="chartLabels"
-                [options]="barChartOptions">
-        </canvas>
-      </div>
-
-      <div >
-
+      <div class="chart-section">
+        <div class="chart-wrapper">
+          <canvas
+            baseChart
+            #lineChart
+            [type]="'line'"
+            [data]="lineChartData"
+            [options]="lineChartOptions">
+          </canvas>
+        </div>
       </div>
     </div>
   </mat-expansion-panel>
