@@ -7,7 +7,78 @@
       </div>
     </mat-expansion-panel-header>
 
-    <div class="chart-container">
+    <div class="filter-section">
+      <h3 class="filter-title">Filtros</h3>
+
+      <form [formGroup]="filterForm" class="filter-form">
+        <div class="row">
+          <mat-form-field appearance="outline" class="date-range-select">
+            <mat-label>Período</mat-label>
+            <mat-select formControlName="dateRange">
+              <mat-option *ngFor="let option of dateRangeOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="custom-date-range" *ngIf="showCustomDateRange">
+            <mat-form-field appearance="outline">
+              <mat-label>Data Inicial</mat-label>
+              <input
+                matInput
+                [matDatepicker]="startPicker"
+                formControlName="startDate"
+                [placeholder]="'DD/MM/AAAA'"
+              >
+              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Data Final</mat-label>
+              <input
+                matInput
+                [matDatepicker]="endPicker"
+                formControlName="endDate"
+                [placeholder]="'DD/MM/AAAA'">
+              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
+            <div class="h-20 d-flex d-flex justify-center items-start">
+              <app-custom-button
+                text="Filtrar"
+                type="submit"
+                variant="primary"
+                [isGradient]="true"
+                [customClasses]="'w-full border-0 hover:bg-white transition-colors'"
+                (buttonClick)="applyCustomFilter()">
+
+              </app-custom-button>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button mat-stroked-button (click)="resetFilters()">
+            <mat-icon>refresh</mat-icon> Limpar Filtros
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="loading-indicator" *ngIf="isLoading">
+      <mat-spinner diameter="40"></mat-spinner>
+      <span>Carregando dados...</span>
+    </div>
+
+    <div class="no-data-message" *ngIf="noDataMessage">
+      <mat-icon>info</mat-icon>
+      <span>{{ noDataMessage }}</span>
+    </div>
+
+
+    <div class="chart-container" *ngIf="!noDataMessage">
       <div class="chart-section">
         <div class="chart-wrapper">
           <canvas
@@ -20,7 +91,7 @@
         </div>
       </div>
 
-      <div class="chart-section">
+      <div class="chart-section" *ngIf="!noDataMessage">
         <div class="chart-wrapper">
           <canvas
             baseChart

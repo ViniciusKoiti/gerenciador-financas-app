@@ -4,7 +4,18 @@ import {MatIcon} from '@angular/material/icon';
 import {BaseChartDirective} from 'ng2-charts';
 import {LineGraphService} from '@shared/services/line-graph.service';
 import {ChartConfiguration, ChartData} from 'chart.js';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatProgressSpinner} from '@angular/material/progress-spinner';
+import {MatButton} from '@angular/material/button';
+import {MatFormField, MatLabel} from '@angular/material/form-field';
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
+import {MatOption, MatSelect} from '@angular/material/select';
+import {CommonModule, DatePipe} from '@angular/common';
+import {MatNativeDateModule} from '@angular/material/core';
+import {MatInput} from '@angular/material/input';
+import {CustomButtonComponent} from '@shared/components/custom-buttom/custom-buttom.component';
+import {map} from 'rxjs/operators';
+import {CustomPickerFormatsDirective} from '@shared/directive/date-format.directive';
 
 @Component({
   selector: 'app-report-graph',
@@ -13,7 +24,23 @@ import {FormBuilder, FormGroup} from '@angular/forms';
     MatAccordion,
     MatExpansionPanelHeader,
     MatIcon,
-    BaseChartDirective
+    BaseChartDirective,
+    MatProgressSpinner,
+    MatButton,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatDatepickerToggle,
+    MatDatepicker,
+    MatLabel,
+    MatDatepickerInput,
+    MatSelect,
+    MatOption,
+    MatNativeDateModule,
+    CommonModule,
+    MatInput,
+    CustomButtonComponent,
+    CustomPickerFormatsDirective
   ],
   templateUrl: './report-graph.component.html',
   styleUrl: './report-graph.component.scss',
@@ -24,13 +51,26 @@ export class ReportGraphComponent implements OnInit  {
   @ViewChild('lineChart') lineChart?: BaseChartDirective;
   private readonly lineGraphService = inject(LineGraphService);
   private readonly formBuilder = inject(FormBuilder);
+  private readonly datePipe = inject(DatePipe);
   filterForm: FormGroup;
 
   constructor() {
     this.filterForm = this.formBuilder.group({
-      dateRange: ['30'],  // Padrão: últimos 30 dias
-      startDate: [null],
-      endDate: [null]
+      dateRange: new FormControl<string>('30'),
+      startDate: new FormControl<Date | null>(null),
+      endDate: new FormControl<Date | null>(null)
+    });
+
+    console.log('Valor inicial de dateRange:', this.filterForm.get('dateRange')?.value);
+
+
+    this.filterForm.get('dateRange')?.valueChanges.subscribe(value => {
+      console.log('dateRange alterado:', value);
+      this.showCustomDateRange = value === 'custom';
+
+      if (value !== 'custom') {
+        this.fetchData();
+      }
     });
   }
 
@@ -41,6 +81,14 @@ export class ReportGraphComponent implements OnInit  {
     { value: '365', label: 'Último ano' },
     { value: 'custom', label: 'Período personalizado' }
   ];
+
+  formatDisplayDate = (date: Date | null): string => {
+    return date ? this.datePipe.transform(date, 'dd/MM/yyyy') || '' : '';
+  };
+
+  isLoading = false;
+  showCustomDateRange = false;
+  noDataMessage = '';
 
   private colorPalette = [
     'rgba(71, 123, 189, 0.7)',     // Azul
@@ -63,6 +111,12 @@ export class ReportGraphComponent implements OnInit  {
     'rgba(214, 96, 77, 1)',
     'rgba(76, 180, 168, 1)'
   ];
+
+  formatDate(date: Date): string {
+    return this.datePipe.transform(date, 'dd/MM/yyyy') || '';
+  }
+
+
 
 
   public barChartData: ChartConfiguration['data'] = {
@@ -109,6 +163,8 @@ export class ReportGraphComponent implements OnInit  {
 
   barChartLabels:string[] = [];
   chartLabels: string[] = [];
+  originalData: any[] = [];
+
 
   public lineChartData: ChartData = {
     labels: [],
@@ -251,46 +307,130 @@ export class ReportGraphComponent implements OnInit  {
     }
   };
 
+  formatDateForDisplay(date: Date): string {
+    return this.datePipe.transform(date, 'dd/MM/yyyy') || '';
+  }
 
-
+  formatDateForBackend(date: Date): string {
+    return this.datePipe.transform(date, 'yyyy-MM-dd') || '';
+  }
 
 
   ngOnInit(): void {
-    this.findGraphData();
+    this.fetchData();
+  }
+
+  fetchData(): void {
+    this.isLoading = true;
+    this.noDataMessage = '';
+
+    const dateRange = this.filterForm.get('dateRange')?.value || '30';
+
+    if (dateRange === 'custom') {
+      this.applyCustomFilter();
+      return;
+    }
+
+    const endDate = new Date();
+    const startDate = new Date();
+    const days = parseInt(dateRange);
+    startDate.setDate(endDate.getDate() - days);
+
+    this.applyDateFilter(startDate, endDate);
   }
 
 
   updateChart() {
     setTimeout(() => {
-
       this.barChart?.update();
       this.lineChart?.update();
     }, 300);
   }
 
-  findGraphData(): void {
-    const today = new Date();
-    today.setFullYear(today.getFullYear() - 1);
-    const lastMonth = new Date();
-    lastMonth.setFullYear(lastMonth.getFullYear() - 1);
-    lastMonth.setDate(today.getDate() - 30);
+  applyCustomFilter(): void {
+    const startDate = this.filterForm.get('startDate')?.value;
+    const endDate = this.filterForm.get('endDate')?.value;
 
-    this.lineGraphService.findLineGraphs(lastMonth, today).subscribe(response => {
-      const {labels, dataset} =
-        response.reduce<{ labels: string[], dataset: number[] }>((acc, item) => {
-          acc.labels.push(item.name);
-          acc.dataset.push(item.value);
-          return acc;
-        }, {labels: [], dataset: []});
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
 
-      this.barChartLabels = labels;
-      this.chartLabels = labels;
-      this.barChartData.labels = labels;
-      this.barChartData.datasets[0].data = dataset as any;
-      this.lineChartData.labels = labels;
-      this.lineChartData.datasets[0].data = dataset as any;
-      this.updateChart();
-    });
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        this.noDataMessage = 'Datas inválidas. Por favor, verifique o formato.';
+        this.isLoading = false;
+        return;
+      }
+
+      this.applyDateFilter(start, end);
+    } else {
+      this.noDataMessage = 'Por favor, selecione ambas as datas inicial e final.';
+      this.isLoading = false;
+    }
   }
 
+
+  applyDateFilter(startDate: Date, endDate: Date): void {
+    this.isLoading = true;
+    this.noDataMessage = '';
+
+    // Format dates using DatePipe before sending to service
+    const formattedStartDate = this.formatDateForBackend(startDate);
+    const formattedEndDate = this.formatDateForBackend(endDate);
+
+    // Make sure we have valid formatted dates
+    if (formattedStartDate && formattedEndDate) {
+      this.lineGraphService.findLineGraphs(new Date(formattedStartDate), new Date(formattedEndDate)).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          if (response.length === 0) {
+            this.noDataMessage = 'Nenhum dado encontrado para o período selecionado.';
+          } else {
+            this.noDataMessage = '';
+            this.processData(response);
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.noDataMessage = 'Erro ao filtrar dados. Tente novamente mais tarde.';
+          console.error('Erro ao filtrar dados:', error);
+        }
+      });
+    } else {
+      this.isLoading = false;
+      this.noDataMessage = 'Erro ao formatar datas. Verifique o formato das datas.';
+    }
+  }
+
+  processData(data: any[]): void {
+    const {labels, dataset} = data.reduce<{ labels: string[], dataset: number[] }>(
+      (acc, item) => {
+        acc.labels.push(item.name);
+        acc.dataset.push(item.value);
+        return acc;
+      },
+      {labels: [], dataset: []}
+    );
+
+    if (this.barChartData && this.barChartData.datasets && this.barChartData.datasets.length > 0) {
+      this.barChartData.labels = labels;
+      this.barChartData.datasets[0].data = dataset;
+    }
+
+    if (this.lineChartData && this.lineChartData.datasets && this.lineChartData.datasets.length > 0) {
+      this.lineChartData.labels = labels;
+      this.lineChartData.datasets[0].data = dataset;
+    }
+
+    this.updateChart();
+  }
+
+  resetFilters(): void {
+    this.filterForm.patchValue({
+      dateRange: '30',
+      startDate: null,
+      endDate: null
+    });
+    this.showCustomDateRange = false;
+    this.fetchData();
+  }
 }
