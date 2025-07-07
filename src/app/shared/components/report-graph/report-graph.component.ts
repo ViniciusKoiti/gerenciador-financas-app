@@ -54,12 +54,12 @@ import Chart from 'chart.js/auto';
 })
 export class ReportGraphComponent implements OnInit, AfterViewInit  {
   @ViewChild('barChart') barChart?: BaseChartDirective;
-  
+
   private readonly lineGraphService = inject(LineGraphService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly datePipe = inject(DatePipe);
   private readonly cdr = inject(ChangeDetectorRef);
-  
+
   filterForm: FormGroup;
   chartsInitialized = false;
 
@@ -251,17 +251,17 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
 
   ngAfterViewInit(): void {
     console.log('ngAfterViewInit chamado - iniciando a configuração dos gráficos...');
-    
+
     // Executar inicialização com um delay maior para garantir que o DOM esteja pronto
     setTimeout(() => {
       console.log('Definindo chartsInitialized = true');
       this.chartsInitialized = true;
       this.cdr.detectChanges();
-      
+
       // Verificar se os elementos DOM dos gráficos existem
       console.log('Verificando elementos DOM dos gráficos:');
       console.log('- Elemento barChart existe no DOM:', !!document.querySelector('canvas#barChart'));
-      
+
       // Forçar atualização para garantir renderização inicial
       this.reinitializeCharts();
     }, 500);
@@ -288,31 +288,31 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
 
   updateChart() {
     console.log('===== INÍCIO DA ATUALIZAÇÃO DE GRÁFICOS =====');
-    
+
     if (!this.chartsInitialized) {
       console.log('Charts not initialized yet, delaying update...');
       setTimeout(() => this.updateChart(), 300);
       return;
     }
-    
+
     console.log('Attempting to update charts sequentially...');
-    
+
     // Verificar se os elementos DOM dos gráficos existem
     const barCanvasExists = document.querySelector('canvas#barChart');
-    
+
     console.log('Canvas elements in DOM:');
     console.log('- Bar canvas:', !!barCanvasExists);
-    
+
     // Update charts one by one with delays to ensure proper rendering
     setTimeout(() => {
       try {
         console.log('STATUS DOS GRÁFICOS:');
         console.log('- Bar Chart exists:', !!this.barChart);
         console.log('- Bar Chart.chart exists:', !!this.barChart?.chart);
-        
+
         // Primeiro garantir que os dados estão atualizados
         this.updateChartData();
-        
+
         if (this.barChart?.chart) {
           console.log('Updating bar chart...');
           this.barChart.chart.update();
@@ -321,10 +321,10 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
           // Apenas marque para detectar mudanças em vez de chamar hooks
           this.cdr.detectChanges();
         }
-        
+
         this.cdr.detectChanges();
         console.log('Change detection triggered after bar chart update');
-        
+
         console.log('===== FIM DA ATUALIZAÇÃO DE GRÁFICOS =====');
       } catch (error) {
         console.error('Error updating charts:', error);
@@ -368,14 +368,14 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
           this.isLoading = false;
 
           console.log('Resumo Data:', response.resumoData);
-          
+
           if (!response.resumoData) {
             this.noDataMessage = 'Nenhum dado encontrado para o período selecionado.';
           } else {
             this.noDataMessage = '';
-            
+
             this.processResumoData(response.resumoData);
-            
+
             // Give time for Angular to update DOM before trying to update charts
             setTimeout(() => {
               this.reinitializeCharts();
@@ -393,7 +393,7 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
       this.noDataMessage = 'Erro ao formatar datas. Verifique o formato das datas.';
     }
   }
-  
+
   processResumoData(data: any): void {
     if (!data) {
       // Set default values to avoid undefined errors
@@ -402,7 +402,7 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
         totalDespesas: 0,
         saldoTotal: 0
       };
-      
+
       this.barChartData = {
         labels: ['Sem dados'],
         datasets: [
@@ -426,18 +426,18 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
       };
       return;
     }
-    
+
     console.log('Processing resumo data:', data);
-    
+
     // Atualizar o objeto resumoFinanceiro
     this.resumoFinanceiro = {
       totalReceitas: data.totalReceitas || 0,
       totalDespesas: Math.abs(data.totalDespesas || 0), // Valor absoluto para exibição
       saldoTotal: data.saldo || 0
     };
-    
+
     console.log('Updated resumoFinanceiro:', this.resumoFinanceiro);
-    
+
     // Atualizar dados para o gráfico de barras (comparativo receitas x despesas)
     // Create a completely new data object to force a refresh
     this.barChartData = {
@@ -461,7 +461,7 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
         }
       ]
     };
-    
+
     console.log('Updated barChartData:', this.barChartData);
   }
 
@@ -479,32 +479,32 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
     console.log('===== INÍCIO DE REINICIALIZAÇÃO DE GRÁFICOS =====');
     this.chartsInitialized = false;
     this.cdr.detectChanges();
-    
+
     // Primeiro, validar dados
     this.validateAndSanitizeChartData();
-    
+
     // Verificar se os elementos DOM existem antes de prosseguir
     const barCanvasExists = document.querySelector('canvas#barChart');
-    
+
     console.log('Canvas elements in DOM:');
     console.log('- Bar canvas:', !!barCanvasExists);
-    
+
     if (!barCanvasExists) {
       console.log('Nenhum elemento canvas encontrado no DOM. Aguardando DOM update...');
     }
-    
+
     // Wait for DOM to update and try to initialize charts again
     setTimeout(() => {
       // Garantir que temos dados limpos e válidos
       this.validateAndSanitizeChartData();
-      
+
       this.chartsInitialized = true;
       this.cdr.detectChanges();
       console.log('Charts marked as initialized, DOM should be updated');
-      
+
       // Verificar se os elementos canvas já estão no DOM
       const canvasesExist = !!document.querySelector('canvas#barChart');
-      
+
       if (canvasesExist) {
         console.log('Canvas elements found, proceeding with chart creation...');
         // Force recreation of all charts
@@ -520,11 +520,11 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
       }
     }, 400);
   }
-  
+
   // Método para validar e sanitizar os dados dos gráficos antes da renderização
   validateAndSanitizeChartData(): void {
     console.log('Validando e sanitizando dados dos gráficos');
-    
+
     // Verificar e corrigir dados do gráfico de barras
     if (!this.barChartData || !this.barChartData.datasets || this.barChartData.datasets.length === 0) {
       console.log('Corrigindo dados do gráfico de barras');
@@ -551,34 +551,34 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
       };
     }
   }
-  
+
   destroyAndRecreateCharts(): void {
     console.log('Tentando destruir e recriar gráficos...');
-    
+
     try {
       // First destroy all existing charts
       this.destroyChart(this.barChart, 'bar');
-      
+
       console.log('All charts destroyed, waiting for DOM update...');
-      
+
       // Wait for chart cleanup with a longer timeout for better stability
       setTimeout(() => {
         // Force Angular change detection before recreating
         this.cdr.detectChanges();
-        
+
         // Primeiro verificar se há elementos de canvas no DOM
         const barCanvasExists = document.querySelector('canvas#barChart');
-        
+
         console.log('Canvas elements in DOM:');
         console.log('- Bar canvas:', !!barCanvasExists);
-        
+
         console.log('Attempting to create new charts...');
-        
+
         // Se temos os elementos no DOM, podemos tentar inicializar os charts
         if (barCanvasExists) {
           // Aplicar os dados atualizados antes de tentar recriar
           this.updateChartData();
-          
+
           // Iniciar sequência de recriação
           this.recreateBarChart();
         } else {
@@ -597,24 +597,24 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
       this.updateChart();
     }
   }
-  
+
   updateChartData(): void {
     try {
       console.log('===== ATUALIZANDO DADOS DOS GRÁFICOS =====');
-      
+
       if (this.barChart?.chart) {
         console.log('Atualizando dados do bar chart...');
         this.barChart.chart.data = this.barChartData || { labels: [], datasets: [] };
         this.barChart.chart.update();
       }
-      
+
       console.log('Todos os dados dos gráficos foram atualizados');
       this.cdr.detectChanges();
     } catch (error) {
       console.error('Error updating chart data:', error);
     }
   }
-  
+
   recreateBarChart(): void {
     setTimeout(() => {
       try {
@@ -627,7 +627,7 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
             console.log('Instância do gráfico de barras não disponível, forçando renderização...');
             // Em vez de ngOnChanges, vamos forçar uma marcação de mudanças
             this.cdr.detectChanges();
-            
+
             // Se o gráfico ainda não foi criado, tentar inicializar os dados
             if (this.barChartData && this.barChartData.datasets) {
               setTimeout(() => {
@@ -641,7 +641,7 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
           console.log('Gráfico de barras não disponível');
         }
         console.log('Todos os gráficos foram recriados');
-        
+
         // Verificar o estado final de todos os gráficos
         this.logChartState();
       } catch (error) {
@@ -651,7 +651,7 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
       }
     }, 100);
   }
-  
+
   // Método para registrar informações detalhadas sobre o estado do gráfico
   logChartState(): void {
     console.log(`===== DIAGNÓSTICO: Gráfico de Barras =====`);
@@ -659,35 +659,35 @@ export class ReportGraphComponent implements OnInit, AfterViewInit  {
       console.log('- Instância do gráfico não existe');
       return;
     }
-    
+
     console.log('- Instância BaseChartDirective existe');
     console.log('- Chart.js instance exists:', !!this.barChart.chart);
-    
+
     if (this.barChart.chart) {
       console.log('- Chart has instance:', true);
-      
+
       // Verificar quais métodos/propriedades estão disponíveis
       const chartPropertiesAvailable = Object.keys(this.barChart.chart).join(', ');
       console.log(`- Chart properties available: ${chartPropertiesAvailable.substring(0, 100)}...`);
-      
-      console.log('- Has data:', !!this.barChart.chart.data && 
-                           !!this.barChart.chart.data.datasets && 
+
+      console.log('- Has data:', !!this.barChart.chart.data &&
+                           !!this.barChart.chart.data.datasets &&
                            this.barChart.chart.data.datasets.length > 0);
-      
+
       // Verificar dados
       if (this.barChart.chart.data && this.barChart.chart.data.datasets && this.barChart.chart.data.datasets.length > 0) {
         const hasData = this.barChart.chart.data.datasets.some(ds => ds.data && ds.data.length > 0);
         console.log('- Datasets have data points:', hasData);
         console.log('- Number of datasets:', this.barChart.chart.data.datasets.length);
-        console.log('- First dataset data length:', 
+        console.log('- First dataset data length:',
                   this.barChart.chart.data.datasets[0]?.data?.length || 0);
       }
-      
+
       // Verificar se há elementos HTML associados ao gráfico
       console.log('- Canvas element exists:', !!this.barChart.chart.canvas);
-      console.log('- Chart area is sized:', 
-                this.barChart.chart.canvas && 
-                this.barChart.chart.canvas.width > 0 && 
+      console.log('- Chart area is sized:',
+                this.barChart.chart.canvas &&
+                this.barChart.chart.canvas.width > 0 &&
                 this.barChart.chart.canvas.height > 0);
     }
   }
