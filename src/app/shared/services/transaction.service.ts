@@ -1,38 +1,38 @@
-import { ApiResponse } from "@app/models/api-response";
-import { HttpClientService } from "../http/http-client.service";
-import { environment } from "@app/enviroments/enviroments";
-import { Category } from "@app/models/category";
-import {delay, Observable, retry} from "rxjs";
-import { Injectable } from "@angular/core";
-import { Transaction } from "@app/models/transation";
 
+import { Injectable } from '@angular/core';
+import { HttpClientService } from '../http/http-client.service';
+import { Observable, of } from 'rxjs';
+import { ApiResponse } from '@app/models/api-response';
+import { Transaction } from '@app/models/transation';
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionService {
-    private readonly baseUrl = `${environment.apiUrl}/api/transacoes`;
+  private readonly baseUrl = `/api/transacoes`;
 
-    constructor(private http: HttpClientService) {}
+  constructor(private http: HttpClientService) {}
 
-    saveTransaction(transacao: Transaction): Observable<ApiResponse<Transaction>> {
-      return this.http.post<ApiResponse<Transaction>>("/transacoes", transacao);
-    }
+  saveTransaction(transacao: Transaction): Observable<ApiResponse<Transaction>> {
+    return this.http.post<ApiResponse<Transaction>>(this.baseUrl, transacao);
+  }
 
-    findAll(): Observable<ApiResponse<Transaction[]>> {
-      return this.http.get<ApiResponse<Transaction[]>>(`${this.baseUrl}/all`);
-    }
+  listarTodasTransacoes(): Observable<ApiResponse<Transaction[]>> {
+    return this.http.get<ApiResponse<Transaction[]>>(this.baseUrl);
+  }
 
-    findById(id: string): Observable<ApiResponse<Transaction>> {
-      return this.http.get<ApiResponse<Transaction>>(`/transacoes/${id}`);
-    }
+  findAll(): Observable<ApiResponse<Transaction[]>> {
+    return this.http.get<ApiResponse<Transaction[]>>(`${this.baseUrl}/all`);
+  }
 
-    findByCategoryId(id: number): Observable<Transaction[]> {
+  findById(id: string): Observable<ApiResponse<Transaction>> {
+    return this.http.get<ApiResponse<Transaction>>(`${this.baseUrl}/${id}`);
+  }
+
+  findByCategoryId(id: number): Observable<Transaction[]> {
       return this.http.get<Transaction[]>(`/transacoes/categorias/${id}`);
-    }
+  }
 
-    updateTransactionCategory(transactionId: number, categoryId: number ): Observable<ApiResponse<void>> {
-      return this.http.patch(`/transacoes/${transactionId}`, { id:categoryId });
-    }
-
-
+  updateTransactionCategory(transactionId: number, categoryId: number): Observable<ApiResponse<void>> {
+    return this.http.patch(`${this.baseUrl}/${transactionId}`, { id: categoryId });
+  }
 }

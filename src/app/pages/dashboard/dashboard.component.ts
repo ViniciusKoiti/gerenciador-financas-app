@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { DashboardMenuComponent } from '@app/shared/components/dashboard-menu/dashboard-menu.component';
-import { FormFieldComponent } from '@app/shared/components/form-field/form-field.component';
 import { TransactionBoardComponent } from '@app/shared/components/transaction-board/transaction-board.component';
 
 interface MenuItem {
@@ -16,7 +15,8 @@ interface MenuItem {
   imports: [
     CommonModule,
     DashboardMenuComponent,
-   
+    TransactionBoardComponent,
+
   ],
   standalone: true,
   templateUrl: './dashboard.component.html',

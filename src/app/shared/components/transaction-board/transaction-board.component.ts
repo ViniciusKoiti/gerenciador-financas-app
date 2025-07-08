@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TransactionType } from '@app/models/transaction-type';
 import { Transaction } from '@app/models/transation';
 
 import { CommonModule } from '@angular/common';
@@ -12,9 +11,8 @@ import {
   transferArrayItem
 } from '@angular/cdk/drag-drop';
 import { TransactionTotalizatorComponent } from '../transaction-totalizator/transaction-totalizator.component';
-import {delay, forkJoin, lastValueFrom, map, Observable, of, switchMap, throwError} from 'rxjs';
+import {forkJoin, lastValueFrom, Observable, of, switchMap} from 'rxjs';
 import { Category } from '@app/models/category';
-import { HttpClient } from '@angular/common/http';
 import { CategoriaService } from '@app/shared/services/category.service';
 import { AuthService } from '@app/shared/services/auth.service';
 import { IUser } from '@app/models/user';
@@ -22,14 +20,9 @@ import { AddButtonComponent } from '../add-button/add-button.component';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormTransactionComponent } from '../form-transaction/form-transaction.component';
 import { TransactionService } from '@app/shared/services/transaction.service';
-import {catchError} from 'rxjs/operators';
 import {ApiResponse} from '@models/api-response';
-import {animate, state, style, transition, trigger} from '@angular/animations';
 import {MatIcon} from '@angular/material/icon';
-import {MatButton, MatIconButton} from '@angular/material/button';
-import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
-import {MatCardContent} from '@angular/material/card';
-import {MatButtonToggle, MatButtonToggleGroup} from '@angular/material/button-toggle';
+
 import {CategoryFormComponent} from '@shared/components/category-form/category-form.component';
 import {MatAccordion, MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
 import {TransactionItemComponent} from '@shared/components/transaction-item/transaction-item.component';
@@ -85,24 +78,45 @@ export class TransactionBoardComponent implements OnInit {
     this.isLoading = true;
 
     try {
-      if(!this.actualUser) return;
-      const response = await lastValueFrom(this.categoriaService.findByUsuarioId(this.actualUser!.id));
-      this.categories = response;
-      if (!response) return;
-      const transacaoRequests = this.categories.map(category =>
-        this.transactionService.findByCategoryId(category.id)
-      );
-      if (transacaoRequests.length === 0) {
+      if (!this.actualUser) return;
+
+      const categoriesResponse = await lastValueFrom(this.categoriaService.findByUsuarioId(this.actualUser.id));
+
+      if (Array.isArray(categoriesResponse)) {
+        this.categories = categoriesResponse;
+      } else if (categoriesResponse && 'data' in categoriesResponse) {
+        this.categories = categoriesResponse || [];
+      } else {
+        this.categories = [];
+      }
+
+      if (this.categories.length === 0) {
         this.isLoading = false;
         return;
       }
+
+      const transacaoRequests = this.categories.map(category =>
+        this.transactionService.findByCategoryId(category.id)
+      );
+
       const transacoesPorCategoria = await lastValueFrom(forkJoin(transacaoRequests));
+
       this.categories.forEach((category, index) => {
-        category.transactions = transacoesPorCategoria[index] as Transaction[] || [];
+        const transacoesResult = transacoesPorCategoria[index];
+
+        if (Array.isArray(transacoesResult)) {
+          category.transactions = transacoesResult;
+        } else if (transacoesResult && 'data' in transacoesResult) {
+          category.transactions = transacoesResult || [];
+        } else {
+          category.transactions = [];
+        }
       });
+
       this.connectedDropLists = this.categories.map(category => category.name);
     } catch (error) {
       console.error("Erro ao buscar categorias ou transações:", error);
+      this.categories = [];
     } finally {
       this.isLoading = false;
     }

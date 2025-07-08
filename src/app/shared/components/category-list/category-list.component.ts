@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {CdkDragDrop, CdkDropList} from '@angular/cdk/drag-drop';
 import {AddButtonComponent} from '@shared/components/add-button/add-button.component';
 import {CategoryCardComponent} from '@shared/components/category-card/category-card.component';
+import {NgForOf} from '@angular/common';
 
 interface Transaction {
   description: string;
@@ -25,7 +26,8 @@ interface Category {
   imports: [
     CdkDropList,
     AddButtonComponent,
-    CategoryCardComponent
+    CategoryCardComponent,
+    NgForOf
   ]
 })
 export class CategoryListComponent {
