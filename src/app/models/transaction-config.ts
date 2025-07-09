@@ -1,13 +1,13 @@
-import { RecurrenceType } from "./recurrence-type";
+import {RecurrenceType} from '@models/recurrence-type';
 
 export interface TransactionConfig {
-    paid: boolean;
-    recurrent: boolean;
-    periodicity?: number;
-    ignoreCategoryLimit: boolean;
-    recurrenceType?: RecurrenceType;
-    ignoreBudget: boolean;
-    installments: boolean;
-    paymentDate?: Date;
-    dueDate?: Date;
+  paid?: boolean;
+  recurring?: boolean;
+  periodicity?: number;
+  recurrenceType?: RecurrenceType;
+  dueDate?: Date;
+  paymentDate?: Date;
+  installment?: boolean;
+  ignoreCategoryLimit?: boolean;
+  ignoreBudget?: boolean;
   }

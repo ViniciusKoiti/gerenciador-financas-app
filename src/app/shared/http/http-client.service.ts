@@ -3,7 +3,7 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/c
 import {Observable, throwError} from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
-import { environment } from '@app/enviroments/enviroments';
+import { environment } from '../../../../enviroments/enviroments';
 import { ApiResponse } from '@app/models/api-response';
 
 @Injectable({

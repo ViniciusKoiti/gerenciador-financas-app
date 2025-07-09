@@ -1,6 +1,1 @@
-export enum RecurrenceType {
-    DIARIO = 'DIARIO',
-    SEMANAL = 'SEMANAL',
-    MENSAL = 'MENSAL',
-    ANUAL = 'ANUAL'
-  }
+export type RecurrenceType = 'DIARIO' | 'SEMANAL' | 'QUINZENAL' | 'MENSAL' | 'ANUAL';

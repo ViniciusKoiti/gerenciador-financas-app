@@ -1,78 +1,243 @@
-import { CommonModule } from '@angular/common';
-import {Component, Inject, Input, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { CustomButtonComponent } from '../custom-buttom/custom-buttom.component';
-import { FormFieldComponent } from '../form-field/form-field.component';
-import { TransactionType } from '@app/models/transaction-type';
-import { Transaction } from '@app/models/transation';
-import { MatButton, MatButtonModule } from '@angular/material/button';
-import { FormSelectComponent } from '../form-select/form-select.component';
-import {Category} from '@models/category';
-import {TransactionService} from '@shared/services/transaction.service';
+import {Component, Inject, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
+import {Category} from '@app/models/category';
+import {TransactionService} from '@app/shared/services/transaction.service';
+import {CategoriaService} from '@app/shared/services/category.service';
+import {TransactionType} from '@models/transaction-type';
+import {RecurrenceType} from '@models/recurrence-type';
+import {Transaction} from '@models/transation';
+import {FormFieldComponent} from '@shared/components/form-field/form-field.component';
+import {FormSelectComponent} from '@shared/components/form-select/form-select.component';
+import {CustomButtonComponent} from '@shared/components/custom-buttom/custom-buttom.component';
 
 @Component({
   selector: 'app-form-transaction',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    FormsModule,
-    ReactiveFormsModule,
-    CustomButtonComponent,
-    MatButtonModule,
-    FormFieldComponent,
-    FormSelectComponent
-  ],
   templateUrl: './form-transaction.component.html',
-  styleUrl: './form-transaction.component.scss'
+  styleUrls: ['./form-transaction.component.scss'],
+  imports: [
+    ReactiveFormsModule,
+    MatDialogContent,
+    MatDialogTitle,
+    FormFieldComponent,
+    FormSelectComponent,
+    CustomButtonComponent
+  ],
+  standalone: true
 })
-export class FormTransactionComponent {
+export class FormTransactionComponent implements OnInit {
   transactionForm!: FormGroup;
+  categories: Category[] | null = [];
+  isLoading = false;
+  isEdit = false;
 
+  // Opções para selects
+  transactionTypes: { value: TransactionType; label: string }[] = [
+    { value: TransactionType.RECEITA, label: 'Receita' },
+    { value:  TransactionType.DESPESA, label: 'Despesa' },
+    { value:  TransactionType.TRANSFERENCIA, label: 'Transferência' }
+  ];
 
-  transactionTypes = Object.keys(TransactionType).map((key) => ({
-    value: TransactionType[key as keyof typeof TransactionType],
-    label: key.charAt(0).toUpperCase() + key.slice(1).toLowerCase(),
-  }));
+  recurrenceTypes: { value: RecurrenceType; label: string }[] = [
+    { value: 'DIARIO', label: 'Diário' },
+    { value: 'SEMANAL', label: 'Semanal' },
+    { value: 'QUINZENAL', label: 'Quinzenal' },
+    { value: 'MENSAL', label: 'Mensal' },
+    { value: 'ANUAL', label: 'Anual' }
+  ];
 
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<FormTransactionComponent>,
     private transactionService: TransactionService,
-    @Inject(MAT_DIALOG_DATA) public data: {transacition:  Transaction, category: Category}
-  ) {}
-
-  ngOnInit(): void {
-    const transaction = this.data?.transacition;
-    this.transactionForm = this.fb.group({
-      id: [transaction?.id ?? null],
-      description: [transaction?.description ?? '', [Validators.required]],
-      amount: [transaction?.amount ?? 0, [Validators.required, Validators.min(0.01)]],
-      type: [transaction?.type ?? '', [Validators.required]],
-      date: [transaction?.date ?? '', [Validators.required]],
-      categoryId: [this.data?.category?.id ?? null],
-    });
+    private categoryService: CategoriaService,
+    private dialogRef: MatDialogRef<FormTransactionComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: {
+      category?: Category;
+      transaction?: Transaction
+    }
+  ) {
+    this.isEdit = !!this.data?.transaction;
+    this.initForm();
   }
 
-  save(): void {
-    if (this.transactionForm.invalid) {
+  ngOnInit() {
+    this.loadCategories();
+    if (this.isEdit && this.data?.transaction) {
+      this.populateForm(this.data.transaction);
+    } else if (this.data?.category) {
+      this.transactionForm.patchValue({
+        categoryId: this.data.category.id
+      });
+    }
+  }
+
+  private initForm() {
+    this.transactionForm = this.fb.group({
+      // Campos obrigatórios
+      description: ['', [Validators.required, Validators.minLength(3)]],
+      amount: [null, [Validators.required, Validators.min(0.01)]],
+      type: ['DESPESA', Validators.required],
+      date: [new Date(), Validators.required],
+      categoryId: [null, Validators.required],
+
+      // Campos opcionais (para futuras implementações)
+      observations: [''],
+
+      // Configuração
+      paid: [false],
+      recurring: [false],
+      dueDate: [null],
+
+      // Campos condicionais (aparecem baseado em outros)
+      recurrenceType: [null],
+      periodicity: [1],
+      installment: [false]
+    });
+
+    // Watchers para campos condicionais
+    this.setupFormWatchers();
+  }
+
+  private setupFormWatchers() {
+    // Verificar se o campo 'recurring' existe antes de criar o watcher
+    const recurringControl = this.transactionForm.get('recurring');
+
+    if (!recurringControl) {
+      console.warn('Campo "recurring" não encontrado no formulário');
       return;
     }
 
-    const transaction = this.transactionForm.value as Transaction;
+    recurringControl.valueChanges.subscribe(isRecurring => {
+      const recurrenceTypeControl = this.transactionForm.get('recurrenceType');
+      const periodicityControl = this.transactionForm.get('periodicity');
+      if (recurrenceTypeControl && periodicityControl) {
+        if (isRecurring) {
+          recurrenceTypeControl.setValidators([Validators.required]);
+          periodicityControl.setValidators([Validators.required, Validators.min(1)]);
+        } else {
+          recurrenceTypeControl.clearValidators();
+          periodicityControl.clearValidators();
 
-    this.transactionService.saveTransaction(transaction).subscribe({
-      next: (response) => {
-        this.dialogRef.close(response);
-      },
-      error: (error) => {
-        console.error("Erro ao criar transação:", error);
+          this.transactionForm.patchValue({
+            recurrenceType: null,
+            periodicity: 1
+          }, { emitEvent: false }); // evita loop infinito
+        }
+
+        recurrenceTypeControl.updateValueAndValidity();
+        periodicityControl.updateValueAndValidity();
+      } else {
+        console.warn('Campos de recorrência não encontrados no formulário');
       }
     });
   }
 
-  cancel(): void {
+  private loadCategories() {
+    this.categoryService.findAll().subscribe({
+      next: (categories) => {
+        this.categories = categories.data;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar categorias:', error);
+      }
+    });
+  }
+
+  private populateForm(transaction: Transaction) {
+    const formValue = {
+      description: transaction.description,
+      amount: transaction.amount,
+      type: transaction.type,
+      date: new Date(transaction.date),
+      categoryId: transaction.categoryId,
+      observations: transaction.observations || '',
+
+      // Configurações (se existirem)
+      paid: transaction.configuration?.paid || false,
+      recurring: transaction.configuration?.recurring || false,
+      recurrenceType: transaction.configuration?.recurrenceType,
+      periodicity: transaction.configuration?.periodicity || 1,
+      dueDate: transaction.configuration?.dueDate ? new Date(transaction.configuration.dueDate) : null,
+      installment: transaction.configuration?.installment || false
+    };
+
+    this.transactionForm.patchValue(formValue);
+  }
+
+  // Getters para facilitar validação no template
+  get description() { return this.transactionForm.get('description'); }
+  get amount() { return this.transactionForm.get('amount'); }
+  get type() { return this.transactionForm.get('type'); }
+  get categoryId() { return this.transactionForm.get('categoryId'); }
+  get recurring() { return this.transactionForm.get('recurring'); }
+
+  onSubmit() {
+    if (this.transactionForm.valid) {
+      this.isLoading = true;
+
+      const formData = this.transactionForm.value;
+      const transaction: Transaction = {
+        id: this.data?.transaction?.id,
+        description: formData.description,
+        amount: formData.amount,
+        type: formData.type,
+        date: formData.date,
+        categoryId: formData.categoryId,
+        observations: formData.observations,
+        configuration: {
+          paid: formData.paid,
+          recurring: formData.recurring,
+          recurrenceType: formData.recurrenceType,
+          periodicity: formData.periodicity,
+          dueDate: formData.dueDate,
+          installment: formData.installment
+        }
+      };
+
+      const request$ = this.isEdit
+        ? this.transactionService.updateTransaction(transaction.id!, transaction)
+        : this.transactionService.saveTransaction(transaction);
+
+      request$.subscribe({
+        next: (result) => {
+          this.dialogRef.close(result);
+        },
+        error: (error) => {
+          console.error('Erro ao salvar transação:', error);
+          this.isLoading = false;
+          // TODO: Mostrar toast de erro
+        }
+      });
+    } else {
+      this.transactionForm.markAllAsTouched();
+    }
+  }
+
+  onCancel() {
     this.dialogRef.close();
+  }
+
+  getCategoryIcon(categoryId: number | string): string {
+    if (!this.categories || !categoryId) {
+      return 'category';
+    }
+
+    const category = this.categories.find(cat =>
+      String(cat.id) === String(categoryId)
+    );
+
+    return category?.icon || 'category';
+  }
+
+  getCategoryColor(categoryId: number | string): string {
+    if (!this.categories || !categoryId) {
+      return '#666';
+    }
+
+    const category = this.categories.find(cat =>
+      String(cat.id) === String(categoryId)
+    );
+
+    return '#666';
   }
 }

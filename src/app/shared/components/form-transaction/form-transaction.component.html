@@ -63,7 +63,7 @@
     variant="danger"
     [isGradient]="true"
     [customClasses]="'w-44 border-0'"
-    (buttonClick)="cancel()"
+    (buttonClick)="onCancel()"
   ></app-custom-button>
   <app-custom-button
   text="Salvar"
@@ -71,6 +71,6 @@
   variant="success"
   [isGradient]="true"
   [customClasses]="'w-44 border-0'"
-  (buttonClick)="save()"
+  (buttonClick)="onSubmit()"
 ></app-custom-button>
 </div>

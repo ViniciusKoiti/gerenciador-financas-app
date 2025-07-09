@@ -1,6 +1,6 @@
 import { ApiResponse } from "@app/models/api-response";
 import { HttpClientService } from "../http/http-client.service";
-import { environment } from "@app/enviroments/enviroments";
+import { environment } from "../../../../enviroments/enviroments";
 import { Category } from "@app/models/category";
 import { Observable } from "rxjs";
 import { Injectable } from "@angular/core";
