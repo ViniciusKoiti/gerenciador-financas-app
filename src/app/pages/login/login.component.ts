@@ -107,7 +107,7 @@ export class LoginComponent implements OnInit {
     const loginData: ILoginRequest = this.loginForm.value;
     this.authService.login(loginData).subscribe({
       next: (response) => {
-        console.log('Login successful', response);
+        this.router.navigate([ROUTE_PATHS.DASHBOARD]);
       },
       error: (error) => {
         console.error('Login failed', error);
