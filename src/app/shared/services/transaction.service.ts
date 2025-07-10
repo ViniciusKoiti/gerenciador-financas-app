@@ -10,7 +10,7 @@ import {map} from 'rxjs/operators';
   providedIn: 'root'
 })
 export class TransactionService {
-  private readonly baseUrl = `/api/transacoes`;
+  private readonly baseUrl = `/transacoes`;
 
   constructor(private http: HttpClientService) {}
 
