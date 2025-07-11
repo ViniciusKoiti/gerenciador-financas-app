@@ -178,14 +178,6 @@ export class TransactionBoardComponent implements OnInit {
       newCategoryId
     )
   }
-
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  }
-
   calculateTotals() {
     this.categories = this.categories.map(category => ({
       ...category,

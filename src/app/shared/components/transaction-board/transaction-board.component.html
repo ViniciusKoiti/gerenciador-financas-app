@@ -1,6 +1,13 @@
 <app-transaction-totalizator [categories]="categories">
 </app-transaction-totalizator>
 
+
+
+<app-report-graph>
+
+</app-report-graph>
+
+
 <mat-accordion>
   <mat-expansion-panel>
     <mat-expansion-panel-header>
@@ -9,89 +16,84 @@
         <h2 class="text-2xl font-bold text-gray-900">Transações</h2>
       </div>
     </mat-expansion-panel-header>
-<div class="bg-gray-150 m-3 p-2">
-  <div class="max-w-9xl">
-    <div class="w-full p-4">
-      <div
-        cdkDropList
-        [cdkDropListData]="categories"
-        (cdkDropListDropped)="dropCategory($event)"
-        class="grid grid-flow-col
+    <div class="bg-gray-150 m-3 p-2">
+      <div class="max-w-9xl">
+        <div class="w-full p-4">
+          <div
+            cdkDropList
+            [cdkDropListData]="categories"
+            (cdkDropListDropped)="dropCategory($event)"
+            class="grid grid-flow-col
           bg-gray-300
          sm:auto-cols-[280px]
          md:auto-cols-[320px]
          lg:auto-cols-[360px]
          xl:auto-cols-[400px]  custom-scrollbar overflow-x-auto gap-4 pb-4"
-      >
-        <div
-          *ngFor="let category of categories"
-          cdkDrag
-          class="bg-white shadow rounded-lg p-6 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
-          (cdkDragStarted)="onDragCategoryStarted($event)"
-          (cdkDragEnded)="onDragCategoryEnded($event)"
-          [cdkDragDisabled]="isDragging"
-        >
-          <div class="mb-4 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-              <h2 class="text-lg font-semibold text-gray-700">
-                {{ category.name }}
-              </h2>
-              <span
-                class="px-2 py-1 rounded-full text-sm"
-                [ngClass]="{
+          >
+            <div
+              *ngFor="let category of categories"
+              cdkDrag
+              class="bg-white shadow rounded-lg p-6 transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+              (cdkDragStarted)="onDragCategoryStarted($event)"
+              (cdkDragEnded)="onDragCategoryEnded($event)"
+              [cdkDragDisabled]="isDragging"
+            >
+              <div class="mb-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <h2 class="text-lg font-semibold text-gray-700">
+                    {{ category.name }}
+                  </h2>
+                  <span
+                    class="px-2 py-1 rounded-full text-sm"
+                    [ngClass]="{
                   'bg-red-100 text-red-700': category.name === 'A Pagar',
                   'bg-yellow-100 text-yellow-700': category.name === 'Pretendidas',
                   'bg-blue-100 text-blue-700': category.name === 'Prazo',
                   'bg-green-100 text-green-700': category.name === 'Pagas'
                 }"
-              >
+                  >
                 {{ category?.transactions?.length ??  0 }}
               </span>
+                </div>
+                <app-add-button (click)="openTransationForm(category)">
+                </app-add-button>
+              </div>
+
+              <div
+                cdkDropList
+                [id]="category.name"
+                [cdkDropListData]="category.transactions"
+                [cdkDropListConnectedTo]="connectedDropLists"
+                (cdkDropListDropped)="onDrop($event)"
+                class="flex flex-col space-y-3 p-4 rounded-lg bg-gray-300 min-h-[200px]"
+              >
+                <app-transaction-item
+                  *ngFor="let transaction of category.transactions"
+                  [transaction]="transaction"
+                ></app-transaction-item>
+
+                <div
+                  *ngIf="category?.transactions?.length === 0"
+                  class="text-gray-400 text-center py-4"
+                >
+                  <i class="material-icons text-4xl mb-2">inbox</i>
+                  <p>Não há transações</p>
+                </div>
+              </div>
             </div>
-            <app-add-button (click)="openTransationForm(category)">
-            </app-add-button>
-          </div>
 
-          <div
-            cdkDropList
-            [id]="category.name"
-            [cdkDropListData]="category.transactions"
-            [cdkDropListConnectedTo]="connectedDropLists"
-            (cdkDropListDropped)="onDrop($event)"
-            class="flex flex-col space-y-3 p-4 rounded-lg bg-gray-300 min-h-[200px]"
-          >
-            <app-transaction-item
-              *ngFor="let transaction of category.transactions"
-              [transaction]="transaction"
-            ></app-transaction-item>
-
-            <div
-              *ngIf="category?.transactions?.length === 0"
-              class="text-gray-400 text-center py-4"
-            >
-              <i class="material-icons text-4xl mb-2">inbox</i>
-              <p>Não há transações</p>
+            <div class="bg-white shadow rounded-lg p-5 flex items-center justify-between h-[fit-content] ">
+              <div class="text-center w-11/12 d-flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-700">
+                  Adicionar Categoria
+                </h2>
+                <app-add-button (addClick)="openCategoryForm()">
+                </app-add-button>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div class="bg-white shadow rounded-lg p-5 flex items-center justify-between h-[fit-content] ">
-          <div class="text-center w-11/12 d-flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-700">
-              Adicionar Categoria
-            </h2>
-            <app-add-button (addClick)="openCategoryForm()">
-            </app-add-button>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
   </mat-expansion-panel>
 </mat-accordion>
-
-<app-report-graph>
-
-</app-report-graph>
-
