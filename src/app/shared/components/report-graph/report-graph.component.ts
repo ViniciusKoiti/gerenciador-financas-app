@@ -4,15 +4,15 @@ import { CommonModule } from '@angular/common';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import {Category} from '@models/category';
-import {FinancialSummary} from '@shared/services/chart-data.service';
-import {CategoryTotals, FinancialDataService, TemporalData} from '@shared/services/financial-data.service';
-import {FinancialBarChartComponent} from '@shared/components/financial-bar-chart/financial-bar-chart.component';
-import {finalize, forkJoin, Observable, ObservedValueOf, of} from 'rxjs';
-import {GraficoResponse, LineGraphService} from '@shared/services/line-graph.service';
-import {catchError} from 'rxjs/operators';
-import {ResumoFinanceiroResponse} from '@responses/line-graph.response';
-
+import { Category } from '@models/category';
+import { FinancialSummary } from '@shared/services/chart-data.service';
+import { CategoryTotals, FinancialDataService, TemporalData } from '@shared/services/financial-data.service';
+import { FinancialBarChartComponent } from '@shared/components/financial-bar-chart/financial-bar-chart.component';
+import { finalize, forkJoin, Observable, of } from 'rxjs';
+import { GraficoResponse, LineGraphService } from '@shared/services/line-graph.service';
+import { catchError } from 'rxjs/operators';
+import { ResumoFinanceiroResponse } from '@responses/line-graph.response';
+import { CategoryPieChartComponent } from '@shared/components/category-chart/category-chart.component';
 
 @Component({
   selector: 'app-report-graph',
@@ -26,6 +26,7 @@ import {ResumoFinanceiroResponse} from '@responses/line-graph.response';
     MatCard,
     MatCardContent,
     FinancialBarChartComponent,
+    CategoryPieChartComponent,
   ],
   standalone: true
 })
@@ -34,17 +35,22 @@ export class ReportGraphComponent implements OnInit, OnChanges {
   @Input() categories: Category[] = [];
   @Input() isLoading = false;
 
+  // Dados dos gráficos
   resumoFinanceiro: ResumoFinanceiroResponse = {
-    saldoTotal:0,
+    saldoTotal: 0,
     totalDespesas: 0,
     totalReceitas: 0
-  }
-  dadosPorCategoria: GraficoResponse[] = [];
+  };
 
+  dadosPorCategoria: GraficoResponse[] = [];
+  // evolucaoFinanceira: TransacaoPorPeriodoResponse[] = [];
+
+  // Estados de carregamento
   isLoadingResumo = false;
   isLoadingCategorias = false;
   isLoadingEvolucao = false;
 
+  // Formulário de filtros
   filterForm!: FormGroup;
   showCustomDateRange = false;
 
@@ -107,6 +113,7 @@ export class ReportGraphComponent implements OnInit, OnChanges {
           return of([]);
         })),
 
+
     })
       .pipe(
         finalize(() => {
@@ -117,22 +124,21 @@ export class ReportGraphComponent implements OnInit, OnChanges {
       )
       .subscribe({
         next: (data) => {
+
           this.dadosPorCategoria = data.categorias;
+
 
           console.log('Dados dos gráficos carregados:', {
             resumo: this.resumoFinanceiro,
             categorias: this.dadosPorCategoria,
           });
         },
-        error: (error : Error) => {
+        error: (error: Error) => {
           console.error('Erro geral ao carregar dados dos gráficos:', error);
         }
       });
   }
 
-  /**
-   * Calcula as datas baseado no filtro selecionado
-   */
   private getDateRange(): { startDate: Date | null; endDate: Date | null } {
     const dateRange = this.filterForm.get('dateRange')?.value;
 
@@ -153,75 +159,34 @@ export class ReportGraphComponent implements OnInit, OnChanges {
 
     return { startDate, endDate };
   }
-
-  /**
-   * Aplicar filtros customizados
-   */
-  applyCustomFilter(): void {
-    if (this.showCustomDateRange) {
-      const startDate = this.filterForm.get('startDate')?.value;
-      const endDate = this.filterForm.get('endDate')?.value;
-
-      if (startDate && endDate) {
-        this.loadAllGraphData();
-      } else {
-        console.warn('Por favor, selecione ambas as datas');
-      }
-    }
-  }
-
-  /**
-   * Resetar filtros
-   */
-  resetFilters(): void {
-    this.filterForm.patchValue({
-      dateRange: '30',
-      startDate: null,
-      endDate: null
-    });
-    this.showCustomDateRange = false;
-    this.loadAllGraphData();
-  }
-
-  /**
-   * Recarregar dados manualmente
-   */
   refreshData(): void {
     this.loadAllGraphData();
   }
 
-  /**
-   * Verificar se há dados para exibir
-   */
   get hasData(): boolean {
-    return !!(this.resumoFinanceiro || this.dadosPorCategoria.length > 0);
+    return !!(
+      this.resumoFinanceiro ||
+      this.dadosPorCategoria.length > 0
+    );
   }
 
-  /**
-   * Verificar se está carregando algum dado
-   */
+
   get isLoadingAny(): boolean {
     return this.isLoadingResumo || this.isLoadingCategorias || this.isLoadingEvolucao;
   }
-
-  /**
-   * Formatar moeda usando o service
-   */
   formatCurrency(value: number): string {
-    return this.graficoService.formatCurrency(value);
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
   }
-
-
   get periodoAtual(): string {
-    if (!this.resumoFinanceiro) return '';
-
     const { startDate, endDate } = this.getDateRange();
     if (startDate && endDate) {
       return `${this.formatDate(startDate)} - ${this.formatDate(endDate)}`;
     }
     return '';
   }
-
   private formatDate(date: Date): string {
     return date.toLocaleDateString('pt-BR');
   }

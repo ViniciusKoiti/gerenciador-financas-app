@@ -56,10 +56,12 @@
             <mat-icon class="mr-2">pie_chart</mat-icon>
             Despesas por Categoria
           </h3>
-<!--          <app-category-pie-chart-->
-<!--            [categoryTotals]="categoryTotals"-->
-<!--            [isLoading]="isLoading">-->
-<!--          </app-category-pie-chart>-->
+            <app-category-pie-chart
+              [dadosPorCategoria]="dadosPorCategoria"
+              [isLoading]="isLoadingCategorias"
+            >
+
+            </app-category-pie-chart>
         </mat-card-content>
       </mat-card>
 

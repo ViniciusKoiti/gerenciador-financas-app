@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 import {GraficoResponse, LineGraphService} from '@shared/services/line-graph.service';
-import {ResumoFinanceiroResponse} from '@responses/line-graph.response';
 
 @Component({
   selector: 'app-financial-bar-chart',
@@ -158,9 +157,8 @@ export class FinancialBarChartComponent implements OnChanges {
       return;
     }
 
-    // Filtrar apenas valores válidos (não negativos, não zero)
     const dadosValidos = this.dadosPorCategoria.filter(item =>
-      item.valor != null && item.valor >= 0
+      item.value != null && item.value >= 0
     );
 
     if (dadosValidos.length === 0) {
@@ -168,14 +166,13 @@ export class FinancialBarChartComponent implements OnChanges {
       return;
     }
 
-    // Gerar cores dinâmicas baseadas no número de categorias
     const colors = this.generateColors(dadosValidos.length);
 
     this.chartData = {
-      labels: dadosValidos.map(item => item.categoria),
+      labels: dadosValidos.map(item => item.name),
       datasets: [
         {
-          data: dadosValidos.map(item => item.valor),
+          data: dadosValidos.map(item => item.value),
           label: 'Valor por Categoria',
           backgroundColor: colors.map(color => color.replace('1)', '0.8)')),
           borderColor: colors,
@@ -235,55 +232,12 @@ export class FinancialBarChartComponent implements OnChanges {
       ]
     };
   }
-
-  /**
-   * Método público para obter estatísticas dos dados
-   */
-  public getStatistics(): {
-    total: number;
-    average: number;
-    highest: { categoria: string; valor: number } | null;
-    lowest: { categoria: string; valor: number } | null;
-    count: number;
-  } {
-    if (!this.dadosPorCategoria || this.dadosPorCategoria.length === 0) {
-      return {
-        total: 0,
-        average: 0,
-        highest: null,
-        lowest: null,
-        count: 0
-      };
-    }
-
-    const valores = this.dadosPorCategoria.filter(item => item.valor > 0);
-    const total = valores.reduce((sum, item) => sum + item.valor, 0);
-    const average = total / valores.length;
-
-    const highest = valores.reduce((max, item) =>
-      item.valor > max.valor ? item : max, valores[0]);
-
-    const lowest = valores.reduce((min, item) =>
-      item.valor < min.valor ? item : min, valores[0]);
-
-    return {
-      total,
-      average,
-      highest,
-      lowest,
-      count: valores.length
-    };
-  }
-
-  /**
-   * Método para exportar dados do gráfico (útil para relatórios)
-   */
   public exportData(): { categoria: string; valor: string }[] {
     if (!this.dadosPorCategoria) return [];
 
     return this.dadosPorCategoria.map(item => ({
-      categoria: item.categoria,
-      valor: this.lineGraphService.formatCurrency(item.valor)
+      categoria: item.name,
+      valor: this.lineGraphService.formatCurrency(item.value)
     }));
   }
 }

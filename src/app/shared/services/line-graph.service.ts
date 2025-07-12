@@ -1,8 +1,7 @@
-import {ApiResponse} from '@models/api-response';
 
 export interface GraficoResponse {
-  categoria: string;
-  valor: number;
+  name: string;
+  value: number;
 }
 
 export interface ResumoFinanceiroResponse {
@@ -26,9 +25,8 @@ export interface EvolucaoFinanceiraResponse {
 
 
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { HttpParams } from '@angular/common/http';
 import { HttpClientService } from '@shared/http/http-client.service';
 import { DatePipe } from '@angular/common';
 
