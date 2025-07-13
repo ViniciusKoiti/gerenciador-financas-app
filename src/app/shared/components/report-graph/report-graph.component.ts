@@ -107,7 +107,7 @@ export class ReportGraphComponent implements OnInit, OnChanges {
     this.isLoadingEvolucao = true;
 
     forkJoin({
-      categorias: this.graficoService.findLineGraphs(startDate, endDate)
+      categorias: this.graficoService.findTotalDespesas(startDate, endDate)
         .pipe(catchError(err => {
           console.error('Erro ao carregar categorias:', err);
           return of([]);

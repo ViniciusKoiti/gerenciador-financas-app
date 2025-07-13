@@ -40,7 +40,7 @@ export class LineGraphService {
     private http: HttpClientService,
     private datePipe: DatePipe
   ) {}
-  findLineGraphs(dateInicio: Date, dataFim: Date): Observable<GraficoResponse[]> {
+  findTotalDespesas(dateInicio: Date, dataFim: Date): Observable<GraficoResponse[]> {
 
     const params = new HttpParams()
       .set('dataInicio', dateInicio.toISOString())
@@ -48,7 +48,7 @@ export class LineGraphService {
     const options: { params: HttpParams } = { params };
 
     return this.http.get<GraficoResponse[]>(
-      `${this.baseUrl}/categoria`,
+      `${this.baseUrl}/categoria/despesas`,
       options
     );
   }
