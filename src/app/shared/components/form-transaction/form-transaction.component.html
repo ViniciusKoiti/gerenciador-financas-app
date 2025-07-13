@@ -1,76 +1,323 @@
-<h2 mat-dialog-title>Adicione Transação</h2>
+<!-- Header do Modal -->
+<div class="flex items-center justify-between px-6 py-4">
+  <div class="flex items-center gap-3">
+    <mat-icon class="text-2xl">{{ isEdit ? 'edit' : 'add' }}</mat-icon>
+    <h2 class="text-xl font-bold">
+      {{ isEdit ? 'Editar Transação' : 'Nova Transação' }}
+    </h2>
+  </div>
+  <button mat-icon-button (click)="onCancel()" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 
-<mat-dialog-content>
-  <form [formGroup]="transactionForm" class="w-full max-w-lg mx-auto">
-    <!-- Campo Descrição -->
-    <app-form-field
-      class="w-full max-w-md mx-auto  my-4"
-      label="Descrição"
-      type="text"
-      formControlName="description"
-      placeholder="Digite uma descrição"
-      icon="description"
-      [errors]="{
-        'required': 'Descrição é obrigatória'
-      }"
-    ></app-form-field>
+<mat-dialog-content class="!p-0 !max-h-[80vh] overflow-auto">
+  <form [formGroup]="transactionForm" class="space-y-6">
 
-    <!-- Campo Valor -->
-    <app-form-field
-      class="w-full max-w-md mx-auto mb-4"
-      label="Valor"
-      type="number"
-      formControlName="amount"
-      placeholder="Digite o valor"
-      icon="attach_money"
-      [errors]="{
-        'required': 'Valor é obrigatório',
-        'min': 'O valor deve ser maior que zero'
-      }"
-    ></app-form-field>
+    <!-- SEÇÃO 1: Informações Básicas (Sempre Visível) -->
+    <div class="p-6 bg-white">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <mat-icon class="text-blue-600">description</mat-icon>
+        Informações Básicas
+      </h3>
 
-    <app-form-select
-      label="Tipo de Transação"
-      formControlName="type"
-      placeholder="Selecione um tipo"
-      [options]="transactionTypes"
-      icon="payment"
-      [errors]="{
-    'required': 'O tipo de transação é obrigatório'
-  }"
-    ></app-form-select>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Descrição -->
+        <div class="md:col-span-2">
+          <app-form-field
+            label="Descrição"
+            type="text"
+            formControlName="description"
+            placeholder="Ex: Almoço no restaurante"
+            icon="edit"
+            [errors]="{ 'required': 'Descrição é obrigatória' }">
+          </app-form-field>
+        </div>
 
-    <app-form-field
-      class="w-full max-w-md mx-auto mb-4"
-      label="Data"
-      type="datetime-local"
-      formControlName="date"
-      placeholder="Selecione uma data"
-      icon="event"
+        <app-form-field
+          label="Valor"
+          type="number"
+          formControlName="amount"
+          placeholder="R$ 0,00"
+          icon="attach_money"
+          [errors]="{
+            'required': 'Valor é obrigatório',
+            'min': 'O valor deve ser maior que zero'
+          }">
+        </app-form-field>
 
-      [errors]="{
-        'required': 'A data é obrigatória'
-      }"
-    ></app-form-field>
+        <app-form-select
+          label="Tipo"
+          formControlName="type"
+          placeholder="Selecione o tipo"
+          [options]="transactionTypes"
+          icon="payment"
+          [errors]="{ 'required': 'Tipo é obrigatório' }">
+        </app-form-select>
+
+        <!-- Data e Categoria -->
+        <app-form-field
+          label="Data"
+          type="datetime-local"
+          formControlName="date"
+          icon="event"
+          [errors]="{ 'required': 'Data é obrigatória' }">
+        </app-form-field>
+
+        <app-form-select
+          label="Categoria"
+          formControlName="categoryId"
+          placeholder="Selecione uma categoria"
+          [options]="categoryOptions"
+          icon="folder"
+          [errors]="{ 'required': 'Categoria é obrigatória' }">
+        </app-form-select>
+      </div>
+    </div>
+
+    <!-- SEÇÃO 2: Configurações Opcionais (Expansível) -->
+    <mat-expansion-panel class="!shadow-none !border-t !border-gray-200"
+                         [expanded]="showAdvancedOptions">
+      <mat-expansion-panel-header class="!bg-gray-50 !px-6">
+        <mat-panel-title class="flex items-center gap-2">
+          <mat-icon class="text-purple-600">settings</mat-icon>
+          <span class="font-semibold">Configurações Avançadas</span>
+        </mat-panel-title>
+        <mat-panel-description>
+          Status, vencimento e observações
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="p-6 space-y-4">
+        <!-- Observações -->
+        <div>
+          <app-form-field
+            label="Observações"
+            type="textarea"
+            formControlName="observations"
+            placeholder="Observações adicionais (opcional)"
+            icon="note_add">
+          </app-form-field>
+        </div>
+
+        <!-- Status e Data de Vencimento -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <mat-slide-toggle formControlName="paid" color="primary">
+                <span class="text-sm font-medium">Já foi pago</span>
+              </mat-slide-toggle>
+              <mat-icon class="text-green-600" *ngIf="transactionForm.get('paid')?.value">check_circle</mat-icon>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <mat-slide-toggle formControlName="installment" color="accent">
+                <span class="text-sm font-medium">Parcelado</span>
+              </mat-slide-toggle>
+              <mat-icon class="text-orange-600" *ngIf="transactionForm.get('installment')?.value">credit_card</mat-icon>
+            </div>
+          </div>
+
+          <div>
+            <app-form-field
+              label="Data de Vencimento"
+              type="date"
+              formControlName="dueDate"
+              placeholder="Opcional"
+              icon="schedule">
+            </app-form-field>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <!-- SEÇÃO 3: Recorrência (Expansível) -->
+    <mat-expansion-panel class="!shadow-none !border-t !border-gray-200"
+                         [expanded]="showRecurrenceOptions">
+      <mat-expansion-panel-header class="!bg-gray-50 !px-6">
+        <mat-panel-title class="flex items-center gap-2">
+          <mat-icon class="text-indigo-600">repeat</mat-icon>
+          <span class="font-semibold">Recorrência</span>
+        </mat-panel-title>
+        <mat-panel-description>
+          Configurar transações recorrentes
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="p-6 space-y-4">
+        <!-- Toggle Recorrência -->
+        <div class="flex items-center justify-between p-4 bg-indigo-50 rounded-lg">
+          <div class="flex items-center gap-3">
+            <mat-icon class="text-indigo-600">repeat</mat-icon>
+            <div>
+              <div class="font-medium text-gray-800">Transação Recorrente</div>
+              <div class="text-sm text-gray-600">Repetir automaticamente esta transação</div>
+            </div>
+          </div>
+          <mat-slide-toggle formControlName="recurring" color="primary">
+          </mat-slide-toggle>
+        </div>
+
+        <!-- Campos de Recorrência (Mostrar só se recorrente estiver ativo) -->
+        <div *ngIf="transactionForm.get('recurring')?.value"
+             class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in slide-in-from-top duration-300">
+
+          <app-form-select
+            label="Tipo de Recorrência"
+            formControlName="recurrenceType"
+            placeholder="Como repetir?"
+            [options]="recurrenceTypes"
+            icon="calendar_view_month"
+            [errors]="{ 'required': 'Tipo de recorrência é obrigatório' }">
+          </app-form-select>
+
+          <app-form-field
+            label="A cada quantos?"
+            type="number"
+            formControlName="periodicity"
+            placeholder="Ex: 1, 2, 3..."
+            icon="timer"
+            [errors]="{
+              'required': 'Periodicidade é obrigatória',
+              'min': 'Deve ser pelo menos 1'
+            }">
+          </app-form-field>
+
+          <!-- Preview da Recorrência -->
+          <div class="md:col-span-2 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+            <div class="flex items-center gap-2 text-blue-800">
+              <mat-icon class="text-sm">info</mat-icon>
+              <span class="text-sm font-medium">
+                {{ getRecurrencePreview() }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel class="!shadow-none !border-t !border-gray-200">
+      <mat-expansion-panel-header class="!bg-gray-50 !px-6">
+        <mat-panel-title class="flex items-center gap-2">
+          <mat-icon class="text-amber-600">account_balance_wallet</mat-icon>
+          <span class="font-semibold">Controles de Orçamento</span>
+        </mat-panel-title>
+        <mat-panel-description>
+          Configurações especiais de limite
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="p-6 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex items-center justify-between p-4 bg-amber-50 rounded-lg">
+            <div class="flex items-center gap-3">
+              <mat-icon class="text-amber-600">warning</mat-icon>
+              <div>
+                <div class="font-medium text-gray-800">Ignorar Limite da Categoria</div>
+                <div class="text-xs text-gray-600">Permite ultrapassar o limite definido</div>
+              </div>
+            </div>
+            <mat-slide-toggle formControlName="ignorarLimiteCategoria" color="warn">
+            </mat-slide-toggle>
+          </div>
+
+          <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
+            <div class="flex items-center gap-3">
+              <mat-icon class="text-red-600">money_off</mat-icon>
+              <div>
+                <div class="font-medium text-gray-800">Ignorar Orçamento</div>
+                <div class="text-xs text-gray-600">Não incluir no cálculo do orçamento</div>
+              </div>
+            </div>
+            <mat-slide-toggle formControlName="ignorarOrcamento" color="warn">
+            </mat-slide-toggle>
+          </div>
+        </div>
+
+        <div *ngIf="transactionForm.get('ignorarLimiteCategoria')?.value || transactionForm.get('ignorarOrcamento')?.value"
+             class="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <div class="flex items-center gap-2 text-red-800">
+            <mat-icon class="text-sm">error_outline</mat-icon>
+            <span class="text-sm font-medium">
+              Atenção: Esta transação terá controles de orçamento desabilitados
+            </span>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+
+    <div class="p-6 bg-gradient-to-r from-green-50 to-blue-50 border-t border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <mat-icon class="text-green-600">preview</mat-icon>
+        Resumo da Transação
+      </h3>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div class="p-3 bg-white rounded-lg shadow-sm">
+          <div class="text-xs text-gray-600 uppercase tracking-wide">Valor</div>
+          <div class="text-lg font-bold"
+               [class.text-green-600]="transactionForm.get('type')?.value === 'RECEITA'"
+               [class.text-red-600]="transactionForm.get('type')?.value === 'DESPESA'"
+               [class.text-blue-600]="transactionForm.get('type')?.value === 'TRANSFERENCIA'">
+            {{ formatCurrency(transactionForm.get('amount')?.value || 0) }}
+          </div>
+        </div>
+
+        <div class="p-3 bg-white rounded-lg shadow-sm">
+          <div class="text-xs text-gray-600 uppercase tracking-wide">Status</div>
+          <div class="text-sm font-medium">
+            <span *ngIf="transactionForm.get('paid')?.value" class="text-green-600 flex items-center gap-1">
+              <mat-icon class="text-xs">check</mat-icon> Pago
+            </span>
+            <span *ngIf="!transactionForm.get('paid')?.value" class="text-orange-600 flex items-center gap-1">
+              <mat-icon class="text-xs">schedule</mat-icon> Pendente
+            </span>
+          </div>
+        </div>
+
+        <div class="p-3 bg-white rounded-lg shadow-sm">
+          <div class="text-xs text-gray-600 uppercase tracking-wide">Recorrência</div>
+          <div class="text-sm font-medium">
+            <span *ngIf="transactionForm.get('recurring')?.value" class="text-blue-600 flex items-center gap-1">
+              <mat-icon class="text-xs">repeat</mat-icon> Sim
+            </span>
+            <span *ngIf="!transactionForm.get('recurring')?.value" class="text-gray-600">
+              Única
+            </span>
+          </div>
+        </div>
+
+        <div class="p-3 bg-white rounded-lg shadow-sm">
+          <div class="text-xs text-gray-600 uppercase tracking-wide">Categoria</div>
+          <div class="text-sm font-medium text-gray-800">
+            {{ getCategoryName() || 'Não selecionada' }}
+          </div>
+        </div>
+      </div>
+    </div>
   </form>
 </mat-dialog-content>
 
-<div class="flex justify-between p-4">
+<div class="flex justify-between items-center p-6 bg-gray-50 border-t border-gray-200">
+  <div class="flex items-center gap-2 text-sm text-gray-600">
+    <mat-icon class="text-xs">info</mat-icon>
+    <span>{{ isEdit ? 'Editando transação existente' : 'Criando nova transação' }}</span>
+  </div>
+
+  <div class="flex gap-3">
+    <app-custom-button
+      text="Cancelar"
+      variant="danger"
+      [customClasses]="'px-6 py-2'"
+      (buttonClick)="onCancel()">
+    </app-custom-button>
 
     <app-custom-button
-    text="Cancelar"
-    type="submit"
-    variant="danger"
-    [isGradient]="true"
-    [customClasses]="'w-44 border-0'"
-    (buttonClick)="onCancel()"
-  ></app-custom-button>
-  <app-custom-button
-  text="Salvar"
-  type="submit"
-  variant="success"
-  [isGradient]="true"
-  [customClasses]="'w-44 border-0'"
-  (buttonClick)="onSubmit()"
-></app-custom-button>
+      [text]="isLoading ? 'Salvando...' : (isEdit ? 'Atualizar' : 'Criar Transação')"
+      variant="success"
+      [customClasses]="'px-6 py-2'"
+      [disabled]="!transactionForm.valid || isLoading"
+      (buttonClick)="onSubmit()">
+    </app-custom-button>
+  </div>
 </div>

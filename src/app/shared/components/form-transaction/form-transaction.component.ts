@@ -10,15 +10,26 @@ import {Transaction} from '@models/transation';
 import {FormFieldComponent} from '@shared/components/form-field/form-field.component';
 import {FormSelectComponent} from '@shared/components/form-select/form-select.component';
 import {CustomButtonComponent} from '@shared/components/custom-buttom/custom-buttom.component';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import {CommonModule} from '@angular/common';
+import {combineLatest, of} from 'rxjs';
 
 @Component({
   selector: 'app-form-transaction',
   templateUrl: './form-transaction.component.html',
   styleUrls: ['./form-transaction.component.scss'],
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatDialogContent,
     MatDialogTitle,
+    MatExpansionModule,
+    MatSlideToggleModule,
+    MatIconModule,
+    MatButtonModule,
     FormFieldComponent,
     FormSelectComponent,
     CustomButtonComponent
@@ -27,23 +38,27 @@ import {CustomButtonComponent} from '@shared/components/custom-buttom/custom-but
 })
 export class FormTransactionComponent implements OnInit {
   transactionForm!: FormGroup;
-  categories: Category[] | null = [];
+  categories: Category[] = [];
   isLoading = false;
   isEdit = false;
 
+  // Controle de seções expansíveis
+  showAdvancedOptions = false;
+  showRecurrenceOptions = false;
+
   // Opções para selects
   transactionTypes: { value: TransactionType; label: string }[] = [
-    { value: TransactionType.RECEITA, label: 'Receita' },
-    { value:  TransactionType.DESPESA, label: 'Despesa' },
-    { value:  TransactionType.TRANSFERENCIA, label: 'Transferência' }
+    { value: TransactionType.RECEITA, label: '💰 Receita' },
+    { value: TransactionType.DESPESA, label: '💸 Despesa' },
+    { value: TransactionType.TRANSFERENCIA, label: '🔄 Transferência' }
   ];
 
   recurrenceTypes: { value: RecurrenceType; label: string }[] = [
-    { value: 'DIARIO', label: 'Diário' },
-    { value: 'SEMANAL', label: 'Semanal' },
-    { value: 'QUINZENAL', label: 'Quinzenal' },
-    { value: 'MENSAL', label: 'Mensal' },
-    { value: 'ANUAL', label: 'Anual' }
+    { value: 'DIARIO', label: '📅 Diário' },
+    { value: 'SEMANAL', label: '📆 Semanal' },
+    { value: 'QUINZENAL', label: '🗓️ Quinzenal' },
+    { value: 'MENSAL', label: '📊 Mensal' },
+    { value: 'ANUAL', label: '🎯 Anual' }
   ];
 
   constructor(
@@ -62,6 +77,8 @@ export class FormTransactionComponent implements OnInit {
 
   ngOnInit() {
     this.loadCategories();
+    this.setupFormWatchers();
+
     if (this.isEdit && this.data?.transaction) {
       this.populateForm(this.data.transaction);
     } else if (this.data?.category) {
@@ -76,69 +93,90 @@ export class FormTransactionComponent implements OnInit {
       // Campos obrigatórios
       description: ['', [Validators.required, Validators.minLength(3)]],
       amount: [null, [Validators.required, Validators.min(0.01)]],
-      type: ['DESPESA', Validators.required],
+      type: [TransactionType.DESPESA, Validators.required],
       date: [new Date(), Validators.required],
       categoryId: [null, Validators.required],
 
-      // Campos opcionais (para futuras implementações)
+      // Campos opcionais
       observations: [''],
 
-      // Configuração
+      // Configuração básica
       paid: [false],
-      recurring: [false],
       dueDate: [null],
+      installment: [false],
 
-      // Campos condicionais (aparecem baseado em outros)
+      // Recorrência
+      recurring: [false],
       recurrenceType: [null],
       periodicity: [1],
-      installment: [false]
-    });
 
-    // Watchers para campos condicionais
-    this.setupFormWatchers();
+      // Controles de orçamento
+      ignorarLimiteCategoria: [false],
+      ignorarOrcamento: [false]
+    });
   }
 
   private setupFormWatchers() {
-    // Verificar se o campo 'recurring' existe antes de criar o watcher
-    const recurringControl = this.transactionForm.get('recurring');
-
-    if (!recurringControl) {
-      console.warn('Campo "recurring" não encontrado no formulário');
-      return;
-    }
-
-    recurringControl.valueChanges.subscribe(isRecurring => {
+    // Watcher para recorrência
+    this.transactionForm.get('recurring')?.valueChanges.subscribe(isRecurring => {
       const recurrenceTypeControl = this.transactionForm.get('recurrenceType');
       const periodicityControl = this.transactionForm.get('periodicity');
-      if (recurrenceTypeControl && periodicityControl) {
-        if (isRecurring) {
-          recurrenceTypeControl.setValidators([Validators.required]);
-          periodicityControl.setValidators([Validators.required, Validators.min(1)]);
-        } else {
-          recurrenceTypeControl.clearValidators();
-          periodicityControl.clearValidators();
 
-          this.transactionForm.patchValue({
-            recurrenceType: null,
-            periodicity: 1
-          }, { emitEvent: false }); // evita loop infinito
-        }
-
-        recurrenceTypeControl.updateValueAndValidity();
-        periodicityControl.updateValueAndValidity();
+      if (isRecurring) {
+        recurrenceTypeControl?.setValidators([Validators.required]);
+        periodicityControl?.setValidators([Validators.required, Validators.min(1)]);
+        this.showRecurrenceOptions = true;
       } else {
-        console.warn('Campos de recorrência não encontrados no formulário');
+        recurrenceTypeControl?.clearValidators();
+        periodicityControl?.clearValidators();
+        this.transactionForm.patchValue({
+          recurrenceType: null,
+          periodicity: 1
+        }, { emitEvent: false });
+      }
+
+      recurrenceTypeControl?.updateValueAndValidity();
+      periodicityControl?.updateValueAndValidity();
+    });
+
+    // Watcher para parcelamento + recorrência (não pode ter ambos)
+    combineLatest([
+      this.transactionForm.get('installment')?.valueChanges || of(false),
+      this.transactionForm.get('recurring')?.valueChanges || of(false)
+    ]).subscribe(([installment, recurring]) => {
+      if (installment && recurring) {
+        // Mostrar aviso e desativar parcelamento
+        this.showWarning('Transação não pode ser parcelada e recorrente ao mesmo tempo');
+        this.transactionForm.patchValue({ installment: false }, { emitEvent: false });
       }
     });
+
+    // Expandir seções automaticamente baseado nos valores
+    this.transactionForm.valueChanges.subscribe(values => {
+      this.autoExpandSections(values);
+    });
+  }
+
+  private autoExpandSections(values: any) {
+    // Expandir configurações avançadas se houver dados
+    if (values.observations || values.paid || values.dueDate || values.installment) {
+      this.showAdvancedOptions = true;
+    }
+
+    // Expandir recorrência se ativa
+    if (values.recurring) {
+      this.showRecurrenceOptions = true;
+    }
   }
 
   private loadCategories() {
     this.categoryService.findAll().subscribe({
-      next: (categories) => {
-        this.categories = categories.data;
+      next: (response) => {
+        console.log(response);
       },
-      error: (error) => {
+      error: (error: Error) => {
         console.error('Erro ao carregar categorias:', error);
+        this.showError('Erro ao carregar categorias');
       }
     });
   }
@@ -152,25 +190,64 @@ export class FormTransactionComponent implements OnInit {
       categoryId: transaction.categoryId,
       observations: transaction.observations || '',
 
-      // Configurações (se existirem)
       paid: transaction.configuration?.paid || false,
       recurring: transaction.configuration?.recurring || false,
       recurrenceType: transaction.configuration?.recurrenceType,
       periodicity: transaction.configuration?.periodicity || 1,
       dueDate: transaction.configuration?.dueDate ? new Date(transaction.configuration.dueDate) : null,
-      installment: transaction.configuration?.installment || false
+      installment: transaction.configuration?.installment || false,
+      // ignorarLimiteCategoria: false,
+      // ignorarOrcamento: false
     };
 
     this.transactionForm.patchValue(formValue);
   }
 
-  // Getters para facilitar validação no template
-  get description() { return this.transactionForm.get('description'); }
-  get amount() { return this.transactionForm.get('amount'); }
-  get type() { return this.transactionForm.get('type'); }
-  get categoryId() { return this.transactionForm.get('categoryId'); }
-  get recurring() { return this.transactionForm.get('recurring'); }
+  // Getters para opções de select
+  get categoryOptions(): { value: number; label: string }[] {
+    return this.categories.map(cat => ({
+      value: cat.id,
+      label: `${cat.icon || '📁'} ${cat.name}`
+    }));
+  }
 
+  // Métodos para o template
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value || 0);
+  }
+
+  getCategoryName(): string {
+    const categoryId = this.transactionForm.get('categoryId')?.value;
+    const category = this.categories.find(cat => cat.id === categoryId);
+    return category ? category.name : '';
+  }
+
+  getRecurrencePreview(): string {
+    const recurring = this.transactionForm.get('recurring')?.value;
+    if (!recurring) return '';
+
+    const type = this.transactionForm.get('recurrenceType')?.value;
+    const periodicity = this.transactionForm.get('periodicity')?.value || 1;
+
+    const typeLabels: { [key: string]: string } = {
+      'DIARIO': 'dia(s)',
+      'SEMANAL': 'semana(s)',
+      'QUINZENAL': 'quinzena(s)',
+      'MENSAL': 'mês(es)',
+      'ANUAL': 'ano(s)'
+    };
+
+    if (type && typeLabels[type]) {
+      return `Repetir a cada ${periodicity} ${typeLabels[type]}`;
+    }
+
+    return 'Configure o tipo de recorrência';
+  }
+
+  // Métodos de ação
   onSubmit() {
     if (this.transactionForm.valid) {
       this.isLoading = true;
@@ -190,7 +267,9 @@ export class FormTransactionComponent implements OnInit {
           recurrenceType: formData.recurrenceType,
           periodicity: formData.periodicity,
           dueDate: formData.dueDate,
-          installment: formData.installment
+          installment: formData.installment,
+          // ignorarLimiteCategoria: formData.ignorarLimiteCategoria,
+          // ignorarOrcamento: formData.ignorarOrcamento
         }
       };
 
@@ -199,17 +278,19 @@ export class FormTransactionComponent implements OnInit {
         : this.transactionService.saveTransaction(transaction);
 
       request$.subscribe({
-        next: (result) => {
-          this.dialogRef.close(result);
+        next: (response) => {
+          this.showSuccess(this.isEdit ? 'Transação atualizada!' : 'Transação criada!');
+          this.dialogRef.close(response);
         },
         error: (error) => {
           console.error('Erro ao salvar transação:', error);
+          this.showError('Erro ao salvar transação');
           this.isLoading = false;
-          // TODO: Mostrar toast de erro
         }
       });
     } else {
-      this.transactionForm.markAllAsTouched();
+      this.markFormGroupTouched();
+      this.showError('Preencha todos os campos obrigatórios');
     }
   }
 
@@ -217,27 +298,33 @@ export class FormTransactionComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  getCategoryIcon(categoryId: number | string): string {
-    if (!this.categories || !categoryId) {
-      return 'category';
-    }
-
-    const category = this.categories.find(cat =>
-      String(cat.id) === String(categoryId)
-    );
-
-    return category?.icon || 'category';
+  // Métodos utilitários
+  private markFormGroupTouched() {
+    Object.keys(this.transactionForm.controls).forEach(field => {
+      const control = this.transactionForm.get(field);
+      control?.markAsTouched({ onlySelf: true });
+    });
   }
 
-  getCategoryColor(categoryId: number | string): string {
-    if (!this.categories || !categoryId) {
-      return '#666';
-    }
-
-    const category = this.categories.find(cat =>
-      String(cat.id) === String(categoryId)
-    );
-
-    return '#666';
+  private showSuccess(message: string) {
+    // Implementar notificação de sucesso
+    console.log('✅', message);
   }
+
+  private showError(message: string) {
+    // Implementar notificação de erro
+    console.error('❌', message);
+  }
+
+  private showWarning(message: string) {
+    // Implementar notificação de aviso
+    console.warn('⚠️', message);
+  }
+
+  // Getters para validação
+  get description() { return this.transactionForm.get('description'); }
+  get amount() { return this.transactionForm.get('amount'); }
+  get type() { return this.transactionForm.get('type'); }
+  get categoryId() { return this.transactionForm.get('categoryId'); }
+  get recurring() { return this.transactionForm.get('recurring'); }
 }

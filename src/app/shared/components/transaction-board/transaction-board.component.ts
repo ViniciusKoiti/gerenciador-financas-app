@@ -186,16 +186,28 @@ export class TransactionBoardComponent implements OnInit {
   }
 
 
-  openTransationForm(category: Category, transaction: Transaction | null = null): void {
-    let dialogRef = this.dialog.open(FormTransactionComponent, {
-      height: '400px',
-      width: '600px',
-      data: {category, transaction}
+  openTransactionForm(category: Category, transaction: Transaction | null = null): void {
+    const dialogRef = this.dialog.open(FormTransactionComponent, {
+      // Configurações do modal aprimorado
+      width: '800px',           // Largura maior para acomodar o conteúdo
+      maxWidth: '90vw',         // Responsivo em telas menores
+      maxHeight: '90vh',        // Altura máxima
+      panelClass: 'enhanced-transaction-dialog', // Classe CSS customizada
+      disableClose: false,      // Permitir fechar com ESC
+      hasBackdrop: true,
+      backdropClass: 'dialog-backdrop',
+      data: {
+        category,
+        transaction
+      },
+      // Animações suaves
+      enterAnimationDuration: '300ms',
+      exitAnimationDuration: '200ms'
     });
 
+    // Gerenciar resultado do modal
     dialogRef.afterClosed().pipe(
       switchMap((result: Transaction | undefined) => {
-
         if (result) {
           return this.transactionService.findByCategoryId(category.id);
         }
@@ -207,10 +219,10 @@ export class TransactionBoardComponent implements OnInit {
         if (categoryIndex !== -1) {
           this.categories[categoryIndex].transactions = transactions;
           this.categories = [...this.categories];
+          this.calculateTotals();
         }
       }
     });
-
   }
 
   openCategoryForm(){

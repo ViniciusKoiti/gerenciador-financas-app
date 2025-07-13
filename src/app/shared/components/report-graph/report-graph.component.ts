@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
@@ -13,6 +13,7 @@ import { GraficoResponse, LineGraphService } from '@shared/services/line-graph.s
 import { catchError } from 'rxjs/operators';
 import { ResumoFinanceiroResponse } from '@responses/line-graph.response';
 import { CategoryPieChartComponent } from '@shared/components/category-chart/category-chart.component';
+import {FormFieldComponent} from '@shared/components/form-field/form-field.component';
 
 @Component({
   selector: 'app-report-graph',
@@ -27,6 +28,8 @@ import { CategoryPieChartComponent } from '@shared/components/category-chart/cat
     MatCardContent,
     FinancialBarChartComponent,
     CategoryPieChartComponent,
+    FormFieldComponent,
+    ReactiveFormsModule,
   ],
   standalone: true
 })
@@ -50,7 +53,6 @@ export class ReportGraphComponent implements OnInit, OnChanges {
   isLoadingCategorias = false;
   isLoadingEvolucao = false;
 
-  // Formulário de filtros
   filterForm!: FormGroup;
   showCustomDateRange = false;
 
@@ -171,6 +173,49 @@ export class ReportGraphComponent implements OnInit, OnChanges {
   }
 
 
+  selectDateRange(period: string): void {
+    this.filterForm.patchValue({ dateRange: period });
+
+    if (period !== 'custom') {
+      const { startDate, endDate } = this.calculateDateRange(period);
+      this.filterForm.patchValue({
+        startDate: startDate,
+        endDate: endDate
+      });
+    }
+  }
+
+  private calculateDateRange(period: string): { startDate: Date; endDate: Date } {
+    const endDate = new Date();
+    const startDate = new Date();
+
+    const days = parseInt(period);
+    startDate.setDate(endDate.getDate() - days);
+
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+
+    return { startDate, endDate };
+  }
+
+  applyCustomDateRange(): void {
+    const startDate = this.filterForm.get('startDate')?.value;
+    const endDate = this.filterForm.get('endDate')?.value;
+
+    if (!startDate || !endDate) {
+      alert('⚠️ Por favor, selecione ambas as datas');
+      return;
+    }
+
+    if (new Date(startDate) > new Date(endDate)) {
+      alert('⚠️ A data inicial deve ser anterior à data final');
+      return;
+    }
+
+    this.loadAllGraphData();
+  }
+
+
   get isLoadingAny(): boolean {
     return this.isLoadingResumo || this.isLoadingCategorias || this.isLoadingEvolucao;
   }
@@ -190,4 +235,5 @@ export class ReportGraphComponent implements OnInit, OnChanges {
   private formatDate(date: Date): string {
     return date.toLocaleDateString('pt-BR');
   }
+
 }
