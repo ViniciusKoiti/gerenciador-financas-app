@@ -188,24 +188,21 @@ export class TransactionBoardComponent implements OnInit {
 
   openTransactionForm(category: Category, transaction: Transaction | null = null): void {
     const dialogRef = this.dialog.open(FormTransactionComponent, {
-      // Configurações do modal aprimorado
-      width: '800px',           // Largura maior para acomodar o conteúdo
-      maxWidth: '90vw',         // Responsivo em telas menores
-      maxHeight: '90vh',        // Altura máxima
-      panelClass: 'enhanced-transaction-dialog', // Classe CSS customizada
-      disableClose: false,      // Permitir fechar com ESC
+      width: '800px',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      panelClass: 'enhanced-transaction-dialog',
+      disableClose: false,
       hasBackdrop: true,
       backdropClass: 'dialog-backdrop',
       data: {
         category,
         transaction
       },
-      // Animações suaves
       enterAnimationDuration: '300ms',
       exitAnimationDuration: '200ms'
     });
 
-    // Gerenciar resultado do modal
     dialogRef.afterClosed().pipe(
       switchMap((result: Transaction | undefined) => {
         if (result) {
