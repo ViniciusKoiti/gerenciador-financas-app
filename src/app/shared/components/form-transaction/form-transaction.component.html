@@ -1,4 +1,3 @@
-<!-- Header do Modal -->
 <div class="flex items-center justify-between px-6 py-4">
   <div class="flex items-center gap-3">
     <mat-icon class="text-2xl">{{ isEdit ? 'edit' : 'add' }}</mat-icon>
@@ -14,7 +13,6 @@
 <mat-dialog-content class="!p-0 !max-h-[80vh] overflow-auto">
   <form [formGroup]="transactionForm" class="space-y-6">
 
-    <!-- SEÇÃO 1: Informações Básicas (Sempre Visível) -->
     <div class="p-6 bg-white">
       <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
         <mat-icon class="text-blue-600">description</mat-icon>
@@ -22,7 +20,6 @@
       </h3>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Descrição -->
         <div class="md:col-span-2">
           <app-form-field
             label="Descrição"
@@ -55,7 +52,6 @@
           [errors]="{ 'required': 'Tipo é obrigatório' }">
         </app-form-select>
 
-        <!-- Data e Categoria -->
         <app-form-field
           label="Data"
           type="datetime-local"
@@ -75,7 +71,6 @@
       </div>
     </div>
 
-    <!-- SEÇÃO 2: Configurações Opcionais (Expansível) -->
     <mat-expansion-panel class="!shadow-none !border-t !border-gray-200"
                          [expanded]="showAdvancedOptions">
       <mat-expansion-panel-header class="!bg-gray-50 !px-6">
@@ -89,7 +84,6 @@
       </mat-expansion-panel-header>
 
       <div class="p-6 space-y-4">
-        <!-- Observações -->
         <div>
           <app-form-field
             label="Observações"
@@ -100,7 +94,6 @@
           </app-form-field>
         </div>
 
-        <!-- Status e Data de Vencimento -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="space-y-3">
             <div class="flex items-center gap-3">
@@ -131,7 +124,6 @@
       </div>
     </mat-expansion-panel>
 
-    <!-- SEÇÃO 3: Recorrência (Expansível) -->
     <mat-expansion-panel class="!shadow-none !border-t !border-gray-200"
                          [expanded]="showRecurrenceOptions">
       <mat-expansion-panel-header class="!bg-gray-50 !px-6">
@@ -145,7 +137,6 @@
       </mat-expansion-panel-header>
 
       <div class="p-6 space-y-4">
-        <!-- Toggle Recorrência -->
         <div class="flex items-center justify-between p-4 bg-indigo-50 rounded-lg">
           <div class="flex items-center gap-3">
             <mat-icon class="text-indigo-600">repeat</mat-icon>
@@ -158,7 +149,6 @@
           </mat-slide-toggle>
         </div>
 
-        <!-- Campos de Recorrência (Mostrar só se recorrente estiver ativo) -->
         <div *ngIf="transactionForm.get('recurring')?.value"
              class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in slide-in-from-top duration-300">
 
@@ -183,7 +173,6 @@
             }">
           </app-form-field>
 
-          <!-- Preview da Recorrência -->
           <div class="md:col-span-2 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
             <div class="flex items-center gap-2 text-blue-800">
               <mat-icon class="text-sm">info</mat-icon>
@@ -307,16 +296,23 @@
   <div class="flex gap-3">
     <app-custom-button
       text="Cancelar"
-      variant="danger"
-      [customClasses]="'px-6 py-2'"
+      variant="secondary"
+      size="md"
+      [outline]="true"
+      icon="close"
+      [disabled]="isLoading"
       (buttonClick)="onCancel()">
     </app-custom-button>
 
     <app-custom-button
-      [text]="isLoading ? 'Salvando...' : (isEdit ? 'Atualizar' : 'Criar Transação')"
+      [text]="isEdit ? 'Atualizar' : 'Criar Transação'"
+      [loadingText]="isEdit ? 'Atualizando...' : 'Criando...'"
       variant="success"
-      [customClasses]="'px-6 py-2'"
-      [disabled]="!transactionForm.valid || isLoading"
+      size="md"
+      [isGradient]="true"
+      [icon]="isEdit ? 'edit' : 'add'"
+      [loading]="isLoading"
+      [disabled]="!transactionForm.valid"
       (buttonClick)="onSubmit()">
     </app-custom-button>
   </div>
