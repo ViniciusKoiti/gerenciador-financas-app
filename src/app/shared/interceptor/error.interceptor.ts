@@ -13,13 +13,13 @@ export const errorInterceptor: HttpInterceptorFn = (request : HttpRequest<unknow
     catchError((err: HttpErrorResponse) => {
       switch(err.status){
         case 400:
-          notificationService.error(err.message);
+          notificationService.showError(err.message);
           break
         case 401:
-          notificationService.error(err.error.message);
+          notificationService.showError(err.error.message);
           break;
         case 500:
-          notificationService.error();
+          notificationService.showError("Erro não tratado");
       }
 
       console.log(err);
