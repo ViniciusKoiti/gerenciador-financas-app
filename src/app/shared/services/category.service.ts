@@ -9,7 +9,7 @@ import { Injectable } from "@angular/core";
   providedIn: 'root'
 })
 export class CategoriaService {
-    private readonly baseUrl = `${environment.apiUrl}/api/categorias`;
+    private readonly baseUrl = `/categorias`;
 
     constructor(private http: HttpClientService) {}
 

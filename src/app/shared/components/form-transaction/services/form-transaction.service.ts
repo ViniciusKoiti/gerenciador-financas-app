@@ -42,11 +42,11 @@ export class FormTransactionService {
   }
 
   getFormOptions(): Observable<TransactionFormOptions> {
-    return this.categoryService.findAll().pipe(
+    return this.categoryService.findByUsuarioId(1).pipe(
       map(categories => ({
         transactionTypes: TRANSACTION_TYPES,
         recurrenceTypes: RECURRENCE_TYPES,
-        categories: (categories.data || []).map(cat => ({
+        categories: (categories || []).map(cat => ({
           value: cat.id,
           label: `${cat.icon || '📁'} ${cat.name}`
         }))
