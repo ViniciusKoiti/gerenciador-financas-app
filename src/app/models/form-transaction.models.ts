@@ -10,10 +10,11 @@ export interface TransactionFormData {
   observations?: string;
   paid: boolean;
   dueDate?: Date;
+  paymentDate?: Date;
   installment: boolean;
   recurring: boolean;
   recurrenceType?: RecurrenceType;
   periodicity: number;
-  ignoreLimitCategory: boolean;
-  ignoreBudged: boolean;
+  ignoreCategoryLimit?: boolean;
+  ignoreBudget?: boolean;
 }

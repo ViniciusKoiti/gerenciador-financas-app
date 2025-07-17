@@ -71,6 +71,7 @@
       </div>
     </div>
 
+
     <mat-expansion-panel class="!shadow-none !border-t !border-gray-200"
                          [expanded]="showAdvancedOptions">
       <mat-expansion-panel-header class="!bg-gray-50 !px-6">
@@ -111,14 +112,26 @@
             </div>
           </div>
 
-          <div>
-            <app-form-field
-              label="Data de Vencimento"
-              type="date"
-              formControlName="dueDate"
-              placeholder="Opcional"
-              icon="schedule">
-            </app-form-field>
+          <div class="space-y-4">
+            <div>
+              <app-form-field
+                label="Data de Vencimento"
+                type="date"
+                formControlName="dueDate"
+                placeholder="Opcional"
+                icon="schedule">
+              </app-form-field>
+            </div>
+
+            <div *ngIf="transactionForm.get('paid')?.value">
+              <app-form-field
+                label="Data de Pagamento"
+                type="datetime-local"
+                formControlName="paymentDate"
+                placeholder="Data e hora do pagamento"
+                icon="payment">
+              </app-form-field>
+            </div>
           </div>
         </div>
       </div>
@@ -255,10 +268,10 @@
         <div class="p-3 bg-white rounded-lg shadow-sm">
           <div class="text-xs text-gray-600 uppercase tracking-wide">Status</div>
           <div class="text-sm font-medium">
-            <span *ngIf="transactionForm.get('paid')?.value" class="text-green-600 flex items-center gap-1">
+            <span *ngIf="transactionForm.get('paid')?.value" class="text-green-600 flex items-center justify-center gap-1">
               <mat-icon class="text-xs">check</mat-icon> Pago
             </span>
-            <span *ngIf="!transactionForm.get('paid')?.value" class="text-orange-600 flex items-center gap-1">
+            <span *ngIf="!transactionForm.get('paid')?.value" class="text-orange-600 flex items-center justify-center gap-1">
               <mat-icon class="text-xs">schedule</mat-icon> Pendente
             </span>
           </div>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import {FormGroup, Validators} from '@angular/forms';
-import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import { BehaviorSubject, combineLatest, of } from 'rxjs';
 
 export interface FormState {
   isLoading: boolean;
@@ -36,7 +36,9 @@ export class FormStateTransactionManagerService {
   }
 
   setupFormWatchers(form: FormGroup): void {
-    form.get('recurring')?.valueChanges.subscribe(isRecurring => {
+    const recurringControl = form.get('recurring') as FormControl<boolean>
+
+    recurringControl.valueChanges.subscribe(isRecurring => {
       this.handleRecurrenceChange(form, isRecurring);
     });
 
@@ -47,18 +49,75 @@ export class FormStateTransactionManagerService {
       this.handleInstallmentRecurrenceConflict(form, installment, recurring);
     });
 
-    // Watcher para expansão automática de seções
+    const paidControl = form.get('paid') as FormControl<boolean>;
+    paidControl?.valueChanges.subscribe(isPaid => {
+      this.handlePaidStatusChange(form, isPaid);
+    });
+
+    combineLatest([
+      form.get('paymentDate')?.valueChanges || of(null),
+      form.get('dueDate')?.valueChanges || of(null)
+    ]).subscribe(([paymentDate, dueDate]) => {
+      this.handlePaymentDateValidation(form, paymentDate, dueDate);
+    });
+
     form.valueChanges.subscribe(values => {
       this.autoExpandSections(values);
     });
 
-    // Watcher para estado do formulário
     form.statusChanges.subscribe(() => {
       this.updateState({
         isValid: form.valid,
         isDirty: form.dirty
       });
     });
+  }
+
+
+  private handlePaidStatusChange(form: FormGroup, isPaid: boolean): void {
+    const paymentDateControl = form.get('paymentDate');
+
+    if (!paymentDateControl) {
+      console.warn('Campo "paymentDate" não encontrado no formulário');
+      return;
+    }
+
+    if (isPaid) {
+      if (!paymentDateControl.value) {
+        paymentDateControl.setValue(new Date(), { emitEvent: false });
+      }
+      paymentDateControl.setValidators([Validators.required]);
+    } else {
+      paymentDateControl.setValue(null, { emitEvent: false });
+      paymentDateControl.clearValidators();
+    }
+
+    paymentDateControl.updateValueAndValidity();
+  }
+
+  private handlePaymentDateValidation(form: FormGroup, paymentDate: Date | null, dueDate: Date | null): void {
+    const paymentDateControl = form.get('paymentDate');
+
+    if (!paymentDateControl || !paymentDate || !dueDate) {
+      return;
+    }
+
+    const paymentDateOnly = new Date(paymentDate.getFullYear(), paymentDate.getMonth(), paymentDate.getDate());
+    const dueDateOnly = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate());
+
+    const currentErrors = paymentDateControl.errors || {};
+    delete currentErrors['paymentBeforeDue'];
+
+    if (paymentDateOnly < dueDateOnly) {
+      paymentDateControl.setErrors({
+        ...currentErrors,
+        paymentBeforeDue: true
+      });
+    } else if (Object.keys(currentErrors).length === 0) {
+      paymentDateControl.setErrors(null);
+    } else {
+      paymentDateControl.setErrors(currentErrors);
+    }
   }
 
   private handleRecurrenceChange(form: FormGroup, isRecurring: boolean): void {
@@ -84,7 +143,6 @@ export class FormStateTransactionManagerService {
 
   private handleInstallmentRecurrenceConflict(form: FormGroup, installment: boolean, recurring: boolean): void {
     if (installment && recurring) {
-      // Emit warning event or handle conflict
       form.patchValue({ installment: false }, { emitEvent: false });
     }
   }

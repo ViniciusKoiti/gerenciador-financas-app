@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, map } from 'rxjs';
-import { Category } from '@models/category';
 import { Transaction } from '@models/transation';
 import {CategoriaService} from '@shared/services/category.service';
 import {
@@ -31,13 +30,14 @@ export class FormTransactionService {
       categoryId: [null, Validators.required],
       observations: [''],
       paid: [FORM_DEFAULTS.paid],
+      paymentDate: [null],
       dueDate: [null],
       installment: [FORM_DEFAULTS.installment],
       recurring: [FORM_DEFAULTS.recurring],
       recurrenceType: [null],
       periodicity: [FORM_DEFAULTS.periodicity],
-      ignorarLimiteCategoria: [FORM_DEFAULTS.ignorarLimiteCategoria],
-      ignorarOrcamento: [FORM_DEFAULTS.ignorarOrcamento]
+      ignoreCategoryLimit: [FORM_DEFAULTS.ignoreCategoryLimit || false],
+      ignoreBudget: [FORM_DEFAULTS.ignoreBudget || false]
     });
   }
 
@@ -54,7 +54,7 @@ export class FormTransactionService {
     );
   }
   populateFormWithTransaction(form: FormGroup, transaction: Transaction): void {
-    const formValue = {
+    const formValue : TransactionFormData = {
       description: transaction.description,
       amount: transaction.amount,
       type: transaction.type,
@@ -65,8 +65,11 @@ export class FormTransactionService {
       recurring: transaction.configuration?.recurring || false,
       recurrenceType: transaction.configuration?.recurrenceType,
       periodicity: transaction.configuration?.periodicity || 1,
-      dueDate: transaction.configuration?.dueDate ? new Date(transaction.configuration.dueDate) : null,
+      dueDate: transaction.configuration?.dueDate ? new Date(transaction.configuration.dueDate) : undefined,
+      paymentDate: transaction.configuration?.paymentDate ? new Date(transaction.configuration.paymentDate) : undefined,
       installment: transaction.configuration?.installment || false,
+      ignoreBudget: transaction.configuration?.ignoreBudget || false,
+      ignoreCategoryLimit: transaction.configuration?.ignoreCategoryLimit || false
     };
 
     form.patchValue(formValue);
@@ -86,6 +89,7 @@ export class FormTransactionService {
         recurring: formData.recurring,
         recurrenceType: formData.recurrenceType,
         periodicity: formData.periodicity,
+        paymentDate: formData.paymentDate,
         dueDate: formData.dueDate,
         installment: formData.installment,
       }

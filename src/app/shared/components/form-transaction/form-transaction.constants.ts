@@ -39,6 +39,6 @@ export const FORM_DEFAULTS = {
   installment: false,
   recurring: false,
   periodicity: 1,
-  ignorarLimiteCategoria: false,
-  ignorarOrcamento: false
+  ignoreCategoryLimit: false,
+  ignoreBudget: false
 };
